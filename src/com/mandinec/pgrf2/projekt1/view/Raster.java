@@ -48,9 +48,9 @@ public class Raster extends JPanel {
     }
 
     public void drawPixel(int x, int y, int color) {
-        System.out.println("start metody drawPixel");
+//        System.out.println("start metody drawPixel");
         if (x >= 0 && y >= 0 && x < Raster.WIDTH && y < Raster.HEIGHT) {
-            System.out.println("Prošel drawPixel");
+//            System.out.println("Prošel drawPixel");
             img.setRGB(x, y, color);
         }
     }
