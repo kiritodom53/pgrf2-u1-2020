@@ -15,7 +15,7 @@ class ZBuffer<T extends Number> {
         if (x >= 0 && y >= 0 && x < 800 && y < 600) {
             return data[x][y];
         }
-        return data[0][0];
+        return null;
     }
 
     void set(T zValue, int x, int y) {

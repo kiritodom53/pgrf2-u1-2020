@@ -27,6 +27,7 @@ public class Controller3D {
     private int mousePositionY;
     private int newMousePosX;
     private int newMousePosY;
+    private boolean fill = true;
 
     private int mx, my;
 
@@ -46,7 +47,7 @@ public class Controller3D {
         renderer3D.setView(camera.getViewMatrix());
 //        renderer3D.setProjection();
 
-        renderer3D.draw(elements, vb, ib);
+        renderer3D.draw(elements, vb, ib, fill);
 
         renderer3D.setModel(new Mat4Transl(5, 0, 0));
 //        renderer3D.draw();
@@ -201,7 +202,7 @@ public class Controller3D {
 //            System.out.println(element.getCount());
         }
 
-        renderer3D.draw(elements, vb, ib);
+        renderer3D.draw(elements, vb, ib, fill);
 
 
         //elements.add(new Element(ElementType.LINE, 2, 6));
@@ -256,7 +257,7 @@ public class Controller3D {
                         }*/
                             renderer3D.setView(camera.getViewMatrix());
                             renderer3D.clear();
-                            renderer3D.draw(elements, vb, ib);
+                            renderer3D.draw(elements, vb, ib ,fill);
                         }
                     });
                 }
@@ -297,6 +298,14 @@ public class Controller3D {
                         display();
                         break;
                     case KeyEvent.VK_DOWN:
+                        camera = camera.down(0.1);
+                        renderer3D.setView(camera.getViewMatrix());
+                       display();
+                        break;
+                    case KeyEvent.VK_M:
+                        fill = !fill;
+                        display();
+                        break;
                     case KeyEvent.VK_S:
                         System.out.println("key");
                         camera = camera.up(0.1);

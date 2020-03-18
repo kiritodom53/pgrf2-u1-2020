@@ -14,6 +14,7 @@ public class Renderer3D implements GPURenderer {
 
     private final Raster raster;
     private Mat4 model, view, projection;
+    private boolean fill = true;
 
     private ZBuffer<Double> zBuffer;
 
@@ -29,8 +30,11 @@ public class Renderer3D implements GPURenderer {
         zBuffer.clear(1d);
     }
 
+
+
     @Override
-    public void draw(List<Element> elements, List<Vertex> vb, List<Integer> ib) {
+    public void draw(List<Element> elements, List<Vertex> vb, List<Integer> ib, boolean fill) {
+        this.fill = fill;
         for (Element element : elements) {
             final int start = element.getStart();
             final int count = element.getCount();
@@ -136,7 +140,7 @@ public class Renderer3D implements GPURenderer {
         if (0 > a.z && 0 > b.z && 0 > c.z) return;
         if (a.z > a.w && b.z > b.w && c.z > c.w) return;
 
-        System.out.println("3 podminka orezeani ok");
+      //  System.out.println("3 podminka orezeani ok");
         // 3. seřazení vrcholů podle souřadnice Z
 
         if (a.z < b.z) {
@@ -421,7 +425,9 @@ public class Renderer3D implements GPURenderer {
                 vAC = temp;
 
             }
-        //    this.fillLine(y, vAB, vAC, c1, c3);
+            if (fill)
+            this.fillLine(y, vAB, vAC, c1, c3);
+            else
             this.drawLine(y,vAB,vAC,c2,c3);
 
         }
@@ -438,8 +444,11 @@ public class Renderer3D implements GPURenderer {
                 vBC = vAC;
                 vAC = temp;
             }
-            this.drawLine(y,vBC,vAC,c2,c3);
-           // this.fillLine(y, vBC, vAC, c2, c3);
+            if (fill)
+                this.fillLine(y, vBC, vAC, c2, c3);
+            else
+                this.drawLine(y,vBC,vAC,c2,c3);
+
         }
 
 //        for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {
@@ -514,8 +523,17 @@ public class Renderer3D implements GPURenderer {
             cB = tempC;
         }
 
-        for (int x = (int) Math.round(a.getX()); x < b.getX(); x++) {
-            double t = (x - a.getX()) / (b.getX() - a.getX());
+        int aX = 0;
+        int bX = 800;
+        if (a.getX() > 0){
+            aX = (int) Math.round(a.getX());
+        }
+        if (b.getX() < 800){
+            bX =(int) b.getX();
+        }
+
+        for (int x = aX; x < bX; x++) {
+            double t = (x - aX) / (bX - a.getX());
             double z = a.getZ() * (1 - t) + b.getZ() * t;
 //            System.out.println("drawPixel");
             drawPixel(x-1, y-1, z, cA);
@@ -526,11 +544,17 @@ public class Renderer3D implements GPURenderer {
 //        System.out.println("Renderer3D - start drawPixel");
 //        System.out.println("z je : " + z);
 //        System.out.println("zBuffer je : " + zBuffer.get(x, y));
+        if (zBuffer.get(x,y) == null){
+
+        }else {
+
         if (z < zBuffer.get(x, y)) {
 //            System.out.println("Podmínka Renderer3d drawPixel");
             zBuffer.set(z, x, y);
             raster.drawPixel(x, y, color.getRGB());
         }
+        }
+
     }
 
     private Vec3D transformToWindow(Vec3D v) {
