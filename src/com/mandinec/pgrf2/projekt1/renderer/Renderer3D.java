@@ -421,7 +421,9 @@ public class Renderer3D implements GPURenderer {
                 vAC = temp;
 
             }
-            this.fillLine(y, vAB, vAC, c1, c3);
+        //    this.fillLine(y, vAB, vAC, c1, c3);
+            this.drawLine(y,vAB,vAC,c2,c3);
+
         }
 
         for (int y = (int) (v2.getY() + 1); y < v3.getY(); y++) {
@@ -436,7 +438,8 @@ public class Renderer3D implements GPURenderer {
                 vBC = vAC;
                 vAC = temp;
             }
-            this.fillLine(y, vBC, vAC, c2, c3);
+            this.drawLine(y,vBC,vAC,c2,c3);
+           // this.fillLine(y, vBC, vAC, c2, c3);
         }
 
 //        for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {
@@ -460,6 +463,26 @@ public class Renderer3D implements GPURenderer {
 //
 //            fillLine(y, v13, v23, c2, c3);
 //        }
+    }
+
+    private void drawLine(int y, Vec3D a, Vec3D b, Color cA, Color cB) {
+        if (a.getX() > b.getX()) {
+            Vec3D temp = a;
+            a = b;
+            b = temp;
+
+            Color tempC = cA;
+            cA = cB;
+            cB = tempC;
+        }
+
+
+          //  double t = (x - a.getX()) / (b.getX() - a.getX());
+           // double z = a.getZ() * (1 - t) + b.getZ() * t;
+//            System.out.println("drawPixel");
+            drawPixel((int) Math.round(a.getX()-1), y-1, a.getZ(), cA);
+            drawPixel((int) Math.round(b.getX()-1), y-1, b.getZ(), cA);
+
     }
 
     private void Line(int y, Vec3D a, Vec3D b, Color cA, Color cB){
