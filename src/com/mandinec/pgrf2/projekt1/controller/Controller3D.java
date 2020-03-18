@@ -3,8 +3,12 @@ package com.mandinec.pgrf2.projekt1.controller;
 import com.mandinec.pgrf2.projekt1.model.Element;
 import com.mandinec.pgrf2.projekt1.model.ElementType;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
+import com.mandinec.pgrf2.projekt1.objects.Cube;
+import com.mandinec.pgrf2.projekt1.objects.Solid;
+import com.mandinec.pgrf2.projekt1.objects.Triangle;
 import com.mandinec.pgrf2.projekt1.renderer.GPURenderer;
 import com.mandinec.pgrf2.projekt1.renderer.Renderer3D;
+import com.mandinec.pgrf2.projekt1.renderer.Shader;
 import com.mandinec.pgrf2.projekt1.view.Raster;
 import transforms.*;
 
@@ -21,6 +25,7 @@ public class Controller3D {
 
     private GPURenderer renderer3D;
     private Camera camera;
+    private Shader<Vertex, Color> testShader;
 
     private int click;
     private int mousePositionX;
@@ -28,11 +33,15 @@ public class Controller3D {
     private int newMousePosX;
     private int newMousePosY;
 
+    private Cube cube = new Cube();
+
+    private List<Solid> solids = new ArrayList<>();
+
     private int mx, my;
 
-    private List<Element> elements;
-    private List<Vertex> vb;
-    private List<Integer> ib;
+    private List<Element> elements = new ArrayList<>();
+    private List<Vertex> vb = new ArrayList<>();
+    private List<Integer> ib = new ArrayList<>();
 
     public Controller3D(Raster raster) {
         initObjects(raster);
@@ -44,11 +53,18 @@ public class Controller3D {
 
         renderer3D.setModel(new Mat4Identity());
         renderer3D.setView(camera.getViewMatrix());
+        renderer3D.setShader(testShader);
 //        renderer3D.setProjection();
+        renderer3D.setShader(vertex -> new Color(Math.round(vertex.x % 255), 0, 0));
 
-        renderer3D.draw(elements, vb, ib);
+        //renderer3D.draw(elements, vb, ib);
+        for (Solid solid : solids) {
+            renderer3D.draw(solid);
+        }
+        //renderer3D.draw(new Cube());
 
         renderer3D.setModel(new Mat4Transl(5, 0, 0));
+
 //        renderer3D.draw();
     }
 
@@ -56,14 +72,23 @@ public class Controller3D {
         renderer3D = new Renderer3D(raster);
         resetCamera();
 
+        testShader = Vertex::getColor;
+
+        testShader = vertex -> {
+            long zbytek = Math.round(vertex.x) % 2;
+//                if (zbytek == 0) return Color.GREEN;
+//                else return Color.BLUE;
+            return (zbytek == 0) ? Color.GREEN : Color.BLUE;
+        };
+
         // TODO předpoklad naplněného vertex bufferu
 
-        ib = new ArrayList<>();
-        vb = new ArrayList<>();
-        elements = new ArrayList<>();
-
-
-
+//        ib = new ArrayList<>();
+//        vb = new ArrayList<>();
+//        elements = new ArrayList<>();
+//
+//
+//
 //        elements.add(new Element(ElementType.TRIANGLE, 3, 0));
 //        elements.add(new Element(ElementType.TRIANGLE, 3, 3));
 //        elements.add(new Element(ElementType.TRIANGLE, 3, 6));
@@ -106,66 +131,68 @@ public class Controller3D {
 //        ib.add(13);
 
 
-        elements.add(new Element(ElementType.TRIANGLE, 36, 0));
+//        elements.add(new Element(ElementType.TRIANGLE, 36, 0));
+//
+//
+//        vb.add(new Vertex(new Point3D(0, 0, 0), Color.CYAN)); //0
+//
+//        vb.add(new Vertex(new Point3D(1, 0, 0), Color.CYAN));
+//        vb.add(new Vertex(new Point3D(0, 1, 0), Color.CYAN));
+//        vb.add(new Vertex(new Point3D(1, 1, 0), Color.CYAN)); // 3
+//
+//        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN));
+//        vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN)); // 5
+//
+//        vb.add(new Vertex(new Point3D(1, 0, 1), Color.CYAN));
+//        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN)); // 7
+//
+//        vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN));
+//        vb.add(new Vertex(new Point3D(1, 1, 1), Color.CYAN)); // 9
+//
+//        vb.add(new Vertex(new Point3D(1, 1, 1), Color.CYAN));
+//        vb.add(new Vertex(new Point3D(1, 0, 1), Color.CYAN)); // 11
+//
+//        vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN));
+//        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN)); // 13
+//
+//        ib.add(0);
+//        ib.add(1);
+//        ib.add(2);
+//        ib.add(1);
+//        ib.add(2);
+//        ib.add(3);
+//        ib.add(0);
+//        ib.add(2);
+//        ib.add(5);
+//        ib.add(0);
+//        ib.add(5);
+//        ib.add(4);
+//        ib.add(0);
+//        ib.add(1);
+//        ib.add(6);
+//        ib.add(0);
+//        ib.add(6);
+//        ib.add(7);
+//        ib.add(2);
+//        ib.add(3);
+//        ib.add(8);
+//        ib.add(3);
+//        ib.add(8);
+//        ib.add(9);
+//        ib.add(3);
+//        ib.add(10);
+//        ib.add(11);
+//        ib.add(3);
+//        ib.add(11);
+//        ib.add(1);
+//        ib.add(11);
+//        ib.add(10);
+//        ib.add(12);
+//        ib.add(11);
+//        ib.add(12);
+//        ib.add(13);
 
 
-        vb.add(new Vertex(new Point3D(0, 0, 0), Color.CYAN)); //0
-
-        vb.add(new Vertex(new Point3D(1, 0, 0), Color.RED));
-        vb.add(new Vertex(new Point3D(0, 1, 0), Color.CYAN));
-        vb.add(new Vertex(new Point3D(1, 1, 0), Color.CYAN)); // 3
-
-        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN)); // 5
-
-        vb.add(new Vertex(new Point3D(1, 0, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN)); // 7
-
-        vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(1, 1, 1), Color.CYAN)); // 9
-
-        vb.add(new Vertex(new Point3D(1, 1, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(1, 0, 1), Color.CYAN)); // 11
-
-        vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN)); // 13
-
-        ib.add(0);
-        ib.add(1);
-        ib.add(2);
-        ib.add(1);
-        ib.add(2);
-        ib.add(3);
-        ib.add(0);
-        ib.add(2);
-        ib.add(5);
-        ib.add(0);
-        ib.add(5);
-        ib.add(4);
-        ib.add(0);
-        ib.add(1);
-        ib.add(6);
-        ib.add(0);
-        ib.add(6);
-        ib.add(7);
-        ib.add(2);
-        ib.add(3);
-        ib.add(8);
-        ib.add(3);
-        ib.add(8);
-        ib.add(9);
-        ib.add(3);
-        ib.add(10);
-        ib.add(11);
-        ib.add(3);
-        ib.add(11);
-        ib.add(1);
-        ib.add(11);
-        ib.add(10);
-        ib.add(12);
-        ib.add(11);
-        ib.add(12);
-        ib.add(13);
 
 
 
@@ -179,6 +206,19 @@ public class Controller3D {
 //        vb.add(new Vertex(new Point3D(0, 0, 0.3), Color.BLUE));
 
 
+
+//        Triangle triangle = new Triangle();
+//        ib.addAll(triangle.getIb());
+//        vb.addAll(triangle.getVb());
+//        elements.addAll(triangle.getElemetns());
+//
+//        Cube cube = new Cube();
+//        ib.addAll(cube.getIb());
+//        vb.addAll(cube.getVb());
+//        elements.addAll(cube.getElemetns());
+
+        solids.add(new Cube());
+        solids.add(new Triangle());
 
 
         System.out.println("ib");
@@ -201,7 +241,13 @@ public class Controller3D {
 //            System.out.println(element.getCount());
         }
 
-        renderer3D.draw(elements, vb, ib);
+        //renderer3D.draw(elements, vb, ib);
+
+//        renderer3D.draw(cube);
+
+        for (Solid solid : solids) {
+            renderer3D.draw(solid);
+        }
 
 
         //elements.add(new Element(ElementType.LINE, 2, 6));
@@ -244,9 +290,9 @@ public class Controller3D {
                             System.out.println("click2");
                             //System.out.println(-(mousePositionX - newMousePosX));
                             //System.out.println(-(mousePositionX - newMousePosX) * Math.PI / 360);
-                            //camera = camera.addAzimuth(-0.01);
+                            //camera = camera.addAzimuth(-0.1);
                             //camera = camera.withAzimuth(-(mousePositionX - newMousePosX) * Math.PI / 360);
-                            //camera = camera.addZenith(-0.01);
+                            //camera = camera.addZenith(-0.1);
                             //camera = camera.withZenith(-(mousePositionY - newMousePosY) * Math.PI / 360);
                             Mat4 rot = new Mat4RotXYZ(0, -(mousePositionY - newMousePosY) * 0.02, (mousePositionX - newMousePosX) * 0.02);
                             renderer3D.setModel(renderer3D.getModel().mul(rot));
@@ -256,7 +302,10 @@ public class Controller3D {
                         }*/
                             renderer3D.setView(camera.getViewMatrix());
                             renderer3D.clear();
-                            renderer3D.draw(elements, vb, ib);
+                            //renderer3D.draw(elements, vb, ib);
+                        for (Solid solid : solids) {
+                            renderer3D.draw(solid);
+                        }
                         }
                     });
                 }
@@ -330,22 +379,22 @@ public class Controller3D {
                         display();
                         break;
                     case KeyEvent.VK_NUMPAD1:
-                        camera = camera.addAzimuth(-0.01);
+                        camera = camera.addAzimuth(-0.1);
                         renderer3D.setView(camera.getViewMatrix());
                         display();
                         break;
                     case KeyEvent.VK_NUMPAD2:
-                        camera = camera.addZenith(-0.01);
+                        camera = camera.addZenith(-0.1);
                         renderer3D.setView(camera.getViewMatrix());
                         display();
                         break;
                     case KeyEvent.VK_NUMPAD4:
-                        camera = camera.addAzimuth(0.01);
+                        camera = camera.addAzimuth(0.1);
                         renderer3D.setView(camera.getViewMatrix());
                         display();
                         break;
                     case KeyEvent.VK_NUMPAD5:
-                        camera = camera.addZenith(0.01);
+                        camera = camera.addZenith(0.1);
                         renderer3D.setView(camera.getViewMatrix());
                         display();
                         break;

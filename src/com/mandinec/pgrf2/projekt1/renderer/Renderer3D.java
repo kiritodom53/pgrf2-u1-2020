@@ -3,6 +3,7 @@ package com.mandinec.pgrf2.projekt1.renderer;
 import com.mandinec.pgrf2.projekt1.model.Element;
 import com.mandinec.pgrf2.projekt1.model.ElementType;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
+import com.mandinec.pgrf2.projekt1.objects.Solid;
 import com.mandinec.pgrf2.projekt1.view.Raster;
 import transforms.*;
 
@@ -53,6 +54,39 @@ public class Renderer3D implements GPURenderer {
                     final Integer i2 = ib.get(i + 1);
                     final Vertex v1 = vb.get(i1);
                     final Vertex v2 = vb.get(i2);
+//                    System.out.println("nevim");
+                    prepareLine(v1, v2);
+                }
+            } else {
+                // Point
+            }
+        }
+    }
+
+    @Override
+    public void draw(Solid solid) {
+        for (Element element : solid.getElemetns()) {
+            final int start = element.getStart();
+            final int count = element.getCount();
+            if (element.getElementType() == ElementType.TRIANGLE) {
+                for (int i = start; i < count + start; i += 3) {
+//                    final Vertex v1 = vb.get(ib.get(i));
+                    final Integer i1 = solid.getIb().get(i);
+                    final Integer i2 = solid.getIb().get(i + 1);
+                    final Integer i3 = solid.getIb().get(i + 2);
+                    final Vertex v1 = solid.getVb().get(i1);
+                    final Vertex v2 = solid.getVb().get(i2);
+                    final Vertex v3 = solid.getVb().get(i3);
+//                    System.out.println("nevim");
+                    prepareTriangle(v1, v2, v3);
+                }
+            } else if (element.getElementType() == ElementType.LINE) {
+                for (int i = start; i < count + start; i += 2) {
+//                    final Vertex v1 = vb.get(ib.get(i));
+                    final Integer i1 = solid.getIb().get(i);
+                    final Integer i2 = solid.getIb().get(i + 1);
+                    final Vertex v1 = solid.getVb().get(i1);
+                    final Vertex v2 = solid.getVb().get(i2);
 //                    System.out.println("nevim");
                     prepareLine(v1, v2);
                 }
@@ -113,6 +147,12 @@ public class Renderer3D implements GPURenderer {
 //        }
     }
 
+    // pozor není naše
+    private Vertex calculateTriangleCut(Vertex v1, Vertex v2) {
+        double t = v1.getPoint().getZ() / (v1.getPoint().getZ() - v2.getPoint().getZ());
+        return new Vertex(new Point3D(v1.getPoint().mul(1 - t).add(v2.getPoint().mul(t))), Color.CYAN);
+    }
+
     private void prepareTriangle(Vertex a, Vertex b, Vertex c) {
         // 1. transformace vrcholů
         a = new Vertex(a.getPoint().mul(model).mul(view).mul(projection), a.getColor());
@@ -164,38 +204,32 @@ public class Renderer3D implements GPURenderer {
 //            System.out.println("Nejdu kreslit");
             return;
         } else if (b.z < 0) {
-//            double t = v1.getPosition().getZ() / (v1.getPosition().getZ() - v2.getPosition().getZ());
-//            return v1.mul(1 - t).add(v2.mul(t));
-
-
-//            double t = (0 - a.z) / (b.z - a.z);
-//            Vertex ab = new Vertex(a.getPoint().mul(1 - t).add(b.getPoint().mul(t)), b.getColor());
 
             double t = a.getPoint().getZ() / (a.getPoint().getZ() - b.getPoint().getZ());
             Vertex ab = new Vertex(a.getPoint().mul(1 - t).add(b.getPoint().mul(t)), b.getColor());
             // nekorektně barva, měla by se také interpolovat; volitelně
 
-//            double t2 = -a.z / (c.z - a.z);
-//            Vertex ac = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c.getColor());
-
             double t2 = a.getPoint().getZ() / (a.getPoint().getZ() - c.getPoint().getZ());
             Vertex ac = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c.getColor());
+
+//            Vertex ab = calculateTriangleCut(a, b);
+//            Vertex ac = calculateTriangleCut(a, c);
+
             // lze vytvořit funkci pro ořezání, aby se neopakoval kód
             System.out.println("Jdu kreslit 1");
             drawTriangle(a, ab, ac);
         } else if (c.z < 0) {
             // TODO ac, bc - HOTOVO
-//            double t2 = -a.z / (c.z - a.z);
-//            Vertex ac = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c.getColor());
-//
-//            double t3 = -b.z / (c.z - b.z);
-//            Vertex bc = new Vertex(b.getPoint().mul(1 - t3).add(c.getPoint().mul(t3)), c.getColor());
-
             double t = b.getPoint().getZ() / (b.getPoint().getZ() - c.getPoint().getZ());
             Vertex bc = new Vertex(b.getPoint().mul(1 - t).add(c.getPoint().mul(t)), c.getColor());
 
             double t2 = a.getPoint().getZ() / (a.getPoint().getZ() - c.getPoint().getZ());
             Vertex ac = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c.getColor());
+
+//            Vertex ac = calculateTriangleCut(a, c);
+//            Vertex bc = calculateTriangleCut(b, c);
+
+
             System.out.println("Jdu kreslit 2");
             drawTriangle(a, b, ac);
             drawTriangle(b, ac, bc);
@@ -209,6 +243,15 @@ public class Renderer3D implements GPURenderer {
         }
     }
 
+
+    private Boolean orez(Point3D point){
+        return -point.getW() <= point.getY() &&
+                -point.getW() <= point.getX() &&
+                point.getY() <= point.getW() &&
+                point.getX() <= point.getW() &&
+                point.getZ() >= 0 &&
+                point.getZ() <= point.getW();
+    }
 
     public void drawLine(Vertex a, Vertex b) {
 
@@ -302,96 +345,56 @@ public class Renderer3D implements GPURenderer {
         }
     }
 
-    private void zpracuj(Vertex a, Vertex b, Vertex c){
-        Graphics2D g = (Graphics2D) raster.getGraphics();
-        g.setColor(new Color(1.0f, 1.0f, 1.0f));
-        g.drawLine((int)a.x,(int)a.y,(int)b.x,(int)b.y);
-        g.drawLine((int)c.x,(int)c.y,(int)b.x,(int)b.y);
-        g.drawLine((int)a.x,(int)a.y,(int)c.x,(int)c.y);
-
-
-        if(a.y > b.y){
-            Vertex pom = a;
-            a = b;
-            b = pom;
-        }
-        if(b.y > c.y){
-            Vertex pom = b;
-            b = c;
-            c = pom;
-        }
-        if(c.y > a.y){
-            Vertex pom = c;
-            c = a;
-            a = pom;
-        }
-
-
-        for(int y = Math.max((int) (a.y+1), 0)  ; y <= Math.min(b.y, raster.getHeight()) ; y++){
-            double t1 = (y-a.y)/(b.y-a.y);
-            double t2 = (y-a.y)/(c.y-a.y);
-
-            Point3D v1 = b.getPoint().mul(t1).add(a.getPoint().mul(t1));
-            Point3D v2 = b.getPoint().mul(t2).add(a.getPoint().mul(t2));
-            if (v1.getX() > v2.getX()){
-                Point3D pom = v1;
-                v1 = v2;
-                v2 = pom;
-
-            }
-        }
-
-
-    }
-
 
     private void drawTriangle(Vertex a, Vertex b, Vertex c) {
-        Color c1 = a.getColor();
-        Color c2 = b.getColor();
-        Color c3 = c.getColor();
 
-        Optional<Vec3D> d1 = a.getPoint().dehomog();
-        Optional<Vec3D> d2 = b.getPoint().dehomog();
-        Optional<Vec3D> d3 = c.getPoint().dehomog();
+        if (orez(a.getPoint()) && orez(b.getPoint()) && orez(c.getPoint())){
+            Color c1 = a.getColor();
+            Color c2 = b.getColor();
+            Color c3 = c.getColor();
 
-        // zahodit trojúhelník, pokud některý vrchol má w==0 (nelze provést dehomogenizaci)
-        if (!d1.isPresent() || !d2.isPresent() || !d3.isPresent()) return;
+            Optional<Vec3D> d1 = a.getPoint().dehomog();
+            Optional<Vec3D> d2 = b.getPoint().dehomog();
+            Optional<Vec3D> d3 = c.getPoint().dehomog();
 
-        Vec3D v1 = d1.get();
-        Vec3D v2 = d2.get();
-        Vec3D v3 = d3.get();
+            // zahodit trojúhelník, pokud některý vrchol má w==0 (nelze provést dehomogenizaci)
+            if (!d1.isPresent() || !d2.isPresent() || !d3.isPresent()) return;
+
+            Vec3D v1 = d1.get();
+            Vec3D v2 = d2.get();
+            Vec3D v3 = d3.get();
 
 
-        v1 = transformToWindow(v1);
-        v2 = transformToWindow(v2);
-        v3 = transformToWindow(v3);
-        if (v1.getY() > v2.getY()) {
-            Vec3D temp = v1;
-            v1 = v2;
-            v2 = temp;
+            v1 = transformToWindow(v1);
+            v2 = transformToWindow(v2);
+            v3 = transformToWindow(v3);
+            if (v1.getY() > v2.getY()) {
+                Vec3D temp = v1;
+                v1 = v2;
+                v2 = temp;
 
-            Color tempC = c1;
-            c1 = c2;
-            c2 = tempC;
-        }
-        if (v2.getY() > v3.getY()) {
-            Vec3D temp = v2;
-            v2 = v3;
-            v3 = temp;
+                Color tempC = c1;
+                c1 = c2;
+                c2 = tempC;
+            }
+            if (v2.getY() > v3.getY()) {
+                Vec3D temp = v2;
+                v2 = v3;
+                v3 = temp;
 
-            Color tempC = c2;
-            c2 = c3;
-            c3 = tempC;
-        }
-        if (v1.getY() > v2.getY()) {
-            Vec3D temp = v1;
-            v1 = v2;
-            v2 = temp;
+                Color tempC = c2;
+                c2 = c3;
+                c3 = tempC;
+            }
+            if (v1.getY() > v2.getY()) {
+                Vec3D temp = v1;
+                v1 = v2;
+                v2 = temp;
 
-            Color tempC = c1;
-            c1 = c2;
-            c2 = tempC;
-        }
+                Color tempC = c1;
+                c1 = c2;
+                c2 = tempC;
+            }
 //        System.out.println("PO");
 //        System.out.println(v1.getX());
 //        System.out.println(v2.getX());
@@ -405,39 +408,39 @@ public class Renderer3D implements GPURenderer {
 //        System.out.println(v2.getZ());
 //        System.out.println(v3.getZ());
 
-        // TODO upravit cyklus
-        // TODO dodělat barvy
+            // TODO upravit cyklus
+            // TODO dodělat barvy
 
-        for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {
-            double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
-            double t2 = (y - v1.getY()) / (v3.getY() - v1.getY());
+            for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {
+                double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
+                double t2 = (y - v1.getY()) / (v3.getY() - v1.getY());
 
-            Vec3D vAB = v1.mul(1 - t1).add(v2.mul(t1));
-            Vec3D vAC = v1.mul(1 - t2).add(v3.mul(t2));
+                Vec3D vAB = v1.mul(1 - t1).add(v2.mul(t1));
+                Vec3D vAC = v1.mul(1 - t2).add(v3.mul(t2));
 
-            if (vAB.getX() > vAC.getX()) {
-                Vec3D temp = vAB;
-                vAB = vAC;
-                vAC = temp;
+                if (vAB.getX() > vAC.getX()) {
+                    Vec3D temp = vAB;
+                    vAB = vAC;
+                    vAC = temp;
 
+                }
+                this.fillLine(y, vAB, vAC, c1, c3);
             }
-            this.fillLine(y, vAB, vAC, c1, c3);
-        }
 
-        for (int y = (int) (v2.getY() + 1); y < v3.getY(); y++) {
-            double t1 = (y - v2.getY()) / (v3.getY() - v2.getY());
-            double t2 = (y - v1.getY()) / (v3.getY() - v1.getY());
+            for (int y = (int) (v2.getY() + 1); y < v3.getY(); y++) {
+                double t1 = (y - v2.getY()) / (v3.getY() - v2.getY());
+                double t2 = (y - v1.getY()) / (v3.getY() - v1.getY());
 
-            Vec3D vBC = v2.mul(1 - t1).add(v3.mul(t1));
-            Vec3D vAC = v1.mul(1 - t2).add(v3.mul(t2));
+                Vec3D vBC = v2.mul(1 - t1).add(v3.mul(t1));
+                Vec3D vAC = v1.mul(1 - t2).add(v3.mul(t2));
 
-            if (vBC.getX() > vAC.getX()) {
-                Vec3D temp = vBC;
-                vBC = vAC;
-                vAC = temp;
+                if (vBC.getX() > vAC.getX()) {
+                    Vec3D temp = vBC;
+                    vBC = vAC;
+                    vAC = temp;
+                }
+                this.fillLine(y, vBC, vAC, c2, c3);
             }
-            this.fillLine(y, vBC, vAC, c2, c3);
-        }
 
 //        for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {
 //            double t12 = (y - v1.getY()) / (v2.getY() - v1.getY());
@@ -460,6 +463,10 @@ public class Renderer3D implements GPURenderer {
 //
 //            fillLine(y, v13, v23, c2, c3);
 //        }
+
+        }
+
+
     }
 
     private void Line(int y, Vec3D a, Vec3D b, Color cA, Color cB){
