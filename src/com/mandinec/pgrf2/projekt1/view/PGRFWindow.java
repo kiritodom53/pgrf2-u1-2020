@@ -4,14 +4,24 @@ import com.mandinec.pgrf2.projekt1.model.Element;
 import com.mandinec.pgrf2.projekt1.model.ElementType;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
 import com.mandinec.pgrf2.projekt1.renderer.Renderer3D;
+import transforms.Mat4;
+import transforms.Mat4RotXYZ;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class PGRFWindow extends JFrame {
 
     private final Raster raster;
+    private int click;
+    private int mousePositionX;
+    private int mousePositionY;
+    private int newMousePosX;
+    private int newMousePosY;
+    private Toolbar toolbar;
 
     public PGRFWindow() {
         // bez tohoto nastavení se okno zavře, ale aplikace stále běží na pozadí
@@ -30,53 +40,38 @@ public class PGRFWindow extends JFrame {
         add(raster); // vložit plátno do okna
 
         pack();
+
+        /*toolbar = new Toolbar();
+        toolbar.getRbBezier().setSelected(true);
+        add(toolbar.getToolBar(), BorderLayout.PAGE_START);*/
+
         setLocationRelativeTo(null); // vycentrovat okno
 
-        Raster raster = new Raster();
-        Renderer3D render = new Renderer3D(raster);
 
-        Element e = new Element(ElementType.TRIANGLE, 0, 0);
-        ArrayList<Integer> ib = new ArrayList<>();
-        ArrayList<Vertex> vb = new ArrayList<>();
-
-        /*ib.add(0);
-        ib.add(1);
-        ib.add(1);
-        ib.add(2);
-        ib.add(2);
-        ib.add(3);
-        ib.add(3);
-        ib.add(0);
-        ib.add(0);
-        ib.add(4);
-        ib.add(4);
-        ib.add(5);
-        ib.add(5);
-        ib.add(6);
-        ib.add(6);
-        ib.add(7);
-        ib.add(7);
-        ib.add(4);
-        ib.add(1);
-        ib.add(5);
-        ib.add(2);
-        ib.add(6);
-        ib.add(3);
-        ib.add(7);
-
-        vb.add(new Point3D(-2, -2, -2));
-        vb.add(new Point3D(-2, 2, -2));
-        vb.add(new Point3D(2, 2, -2));
-        vb.add(new Point3D(2, -2, -2));
-
-        vb.add(new Point3D(-2, -2, 2));
-        vb.add(new Point3D(-2, 2, 2));
-        vb.add(new Point3D(2, 2, 2));
-        vb.add(new Point3D(2, -2, 2));
-        setColor(0x00ffff);
-
-
-        render.draw();*/
+//        addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mousePressed(MouseEvent g) {
+//                click = g.getButton();
+//                addMouseMotionListener(new MouseAdapter() {
+//                    @Override
+//                    public void mouseDragged(MouseEvent e) {
+//                        newMousePosX = mousePositionX;
+//                        newMousePosY = mousePositionY;
+//
+//                        mousePositionX = e.getX();
+//                        mousePositionY = e.getY();
+//                        if (click == MouseEvent.BUTTON1) {
+//                            camera = camera.addAzimuth(-(mousePositionX - newMousePosX) * Math.PI / 360);
+//                            camera = camera.addZenith(-(mousePositionY - newMousePosY) * Math.PI / 360);
+//                        } else if (click == MouseEvent.BUTTON3) {
+//                            Mat4 rot = new Mat4RotXYZ(0, -(mousePositionY - newMousePosY) * 0.02, (mousePositionX - newMousePosX) * 0.02);
+//                            model = model.mul(rot);
+//                        }
+//                        draw();
+//                    }
+//                });
+//            }
+//        });
     }
 
     public Raster getRaster() {
