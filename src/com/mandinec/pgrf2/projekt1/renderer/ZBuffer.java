@@ -10,12 +10,18 @@ class ZBuffer<T extends Number> {
         this.data = data;
     }
 
+
     T get(int x, int y) {
-        return data[x][y];
+        if (x >= 0 && y >= 0 && x < 800 && y < 600) {
+            return data[x][y];
+        }
+        return data[0][0];
     }
 
     void set(T zValue, int x, int y) {
-        data[x][y] = zValue;
+        if (x >= 0 && y >= 0 && x < 800 && y < 600) {
+            data[x][y] = zValue;
+        }
     }
 
     void clear(T clearValue) {

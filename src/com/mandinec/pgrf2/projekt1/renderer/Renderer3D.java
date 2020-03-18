@@ -124,15 +124,17 @@ public class Renderer3D implements GPURenderer {
         // rychlé ořezání zobrazovacím objemem
         // vyhodí trojúhelníky, které jsou CELÉ mimo zobrazovací objem
 
+        // Celý mimo zobrazovací objem
+
         if (-a.w > a.x && -b.w > b.x && -c.w > c.x) return;
         if (a.x > a.w && b.x > b.w & c.x > c.w) return;
 //        System.out.println("1 podminka orezeani ok");
         // TODO y, z - HOTOVO
-        if (-a.w > a.y || -b.w > b.y || -c.w > c.y) return;
-        if (a.y > a.w || b.y > b.w || c.y > c.w) return;
+        if (-a.w > a.y && -b.w > b.y && -c.w > c.y) return;
+        if (a.y > a.w && b.y > b.w && c.y > c.w) return;
 //        System.out.println("2 podminka orezeani ok");
-        if (0 > a.z || 0 > b.z || 0 > c.z) return;
-        if (a.z > a.w || b.z > b.w || c.z > c.w) return;
+        if (0 > a.z && 0 > b.z && 0 > c.z) return;
+        if (a.z > a.w && b.z > b.w && c.z > c.w) return;
 
         System.out.println("3 podminka orezeani ok");
         // 3. seřazení vrcholů podle souřadnice Z
@@ -179,7 +181,7 @@ public class Renderer3D implements GPURenderer {
             double t2 = a.getPoint().getZ() / (a.getPoint().getZ() - c.getPoint().getZ());
             Vertex ac = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c.getColor());
             // lze vytvořit funkci pro ořezání, aby se neopakoval kód
-//            System.out.println("Jdu kreslit 1");
+            System.out.println("Jdu kreslit 1");
             drawTriangle(a, ab, ac);
         } else if (c.z < 0) {
             // TODO ac, bc - HOTOVO
@@ -194,13 +196,15 @@ public class Renderer3D implements GPURenderer {
 
             double t2 = a.getPoint().getZ() / (a.getPoint().getZ() - c.getPoint().getZ());
             Vertex ac = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c.getColor());
-//            System.out.println("Jdu kreslit 2-1");
+            System.out.println("Jdu kreslit 2");
             drawTriangle(a, b, ac);
-//            System.out.println("Jdu kreslit 2-2");
             drawTriangle(b, ac, bc);
 
         } else {
-//            System.out.println("Jdu kreslit 3");
+            System.out.println("Jdu kreslit 3");
+            System.out.println("a.z : " + a.z);
+            System.out.println("b.z : " + b.z);
+            System.out.println("c.z : " + c.z);
             drawTriangle(a, b, c);
         }
     }
@@ -491,7 +495,7 @@ public class Renderer3D implements GPURenderer {
             double t = (x - a.getX()) / (b.getX() - a.getX());
             double z = a.getZ() * (1 - t) + b.getZ() * t;
 //            System.out.println("drawPixel");
-            drawPixel(x, y, z, cA);
+            drawPixel(x-1, y-1, z, cA);
         }
     }
 
