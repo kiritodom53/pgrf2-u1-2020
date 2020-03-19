@@ -48,10 +48,13 @@ public class Renderer3D implements GPURenderer {
                     final Vertex v2 = vb.get(i2);
                     final Vertex v3 = vb.get(i3);
 //                    System.out.println("nevim");
+                    //if (fill)
                     prepareTriangle(v1, v2, v3);
+                   // else
+                   //     prepareTriangleWithnoutFill(v1,v2,v3);
                 }
             } else if (element.getElementType() == ElementType.LINE) {
-                for (int i = start; i < count + start; i += 2) {
+              /*  for (int i = start; i < count + start; i += 2) {
 //                    final Vertex v1 = vb.get(ib.get(i));
                     final Integer i1 = ib.get(i);
                     final Integer i2 = ib.get(i + 1);
@@ -59,12 +62,13 @@ public class Renderer3D implements GPURenderer {
                     final Vertex v2 = vb.get(i2);
 //                    System.out.println("nevim");
                     prepareLine(v1, v2);
-                }
+                }*/
             } else {
                 // Point
             }
         }
     }
+
 
     private void prepareLine(Vertex a, Vertex b){
 //        a = new Vertex(a.getPoint().mul(model).mul(view).mul(projection), a.getColor());
@@ -75,7 +79,7 @@ public class Renderer3D implements GPURenderer {
         // TODO y, z - HOTOVO
         if (-a.w > a.y && -b.w > b.y) return;
         if (a.y > a.w && b.y > b.w) return;
-        this.drawLine(a, b);
+        //this.drawLine(a, b);
         System.out.println("Prepare line");
 //        a = new Vertex(a.getPoint().mul(model).mul(view).mul(projection), a.getColor());
 //        b = new Vertex(b.getPoint().mul(model).mul(view).mul(projection), b.getColor());
@@ -186,7 +190,10 @@ public class Renderer3D implements GPURenderer {
             Vertex ac = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c.getColor());
             // lze vytvořit funkci pro ořezání, aby se neopakoval kód
             System.out.println("Jdu kreslit 1");
+            if (fill)
             drawTriangle(a, ab, ac);
+            else
+                new RenderLineTriangle(raster).prepareTriangleWithnoutFill(a,ab,ac);
         } else if (c.z < 0) {
             // TODO ac, bc - HOTOVO
 //            double t2 = -a.z / (c.z - a.z);
@@ -201,110 +208,28 @@ public class Renderer3D implements GPURenderer {
             double t2 = a.getPoint().getZ() / (a.getPoint().getZ() - c.getPoint().getZ());
             Vertex ac = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c.getColor());
             System.out.println("Jdu kreslit 2");
+            if (fill){
             drawTriangle(a, b, ac);
             drawTriangle(b, ac, bc);
+            }
+            else {
+                new RenderLineTriangle(raster).prepareTriangleWithnoutFill(a,b,ac);
+                new RenderLineTriangle(raster).prepareTriangleWithnoutFill(b,ac,bc);
 
+
+
+
+        }
         } else {
-            System.out.println("Jdu kreslit 3");
-            System.out.println("a.z : " + a.z);
-            System.out.println("b.z : " + b.z);
-            System.out.println("c.z : " + c.z);
+          if (fill)
             drawTriangle(a, b, c);
+            else
+              new RenderLineTriangle(raster).prepareTriangleWithnoutFill(a,b,c);
         }
     }
 
 
-    public void drawLine(Vertex a, Vertex b) {
 
-        Color c1 = a.getColor();
-        Color c2 = b.getColor();
-
-        Optional<Vec3D> d1 = a.getPoint().dehomog();
-        Optional<Vec3D> d2 = b.getPoint().dehomog();
-
-//        Vec3D va = RasterizerUtil.viewportTransformation(a.getPosition().ignoreW(), visibilitityBuffer.getWidth(), visibilitityBuffer.getHeight());
-//        Vec3D vb = RasterizerUtil.viewportTransformation(b.getPosition().ignoreW(), visibilitityBuffer.getWidth(), visibilitityBuffer.getHeight());
-
-        if (!d1.isPresent() || !d2.isPresent()) return;
-
-        System.out.println("is present ");
-
-
-        Vec3D v1 = d1.get();
-        Vec3D v2 = d2.get();
-
-        v1 = transformToWindow(v1);
-        v2 = transformToWindow(v2);
-
-
-        if (v1.getY() > v2.getY()) {
-            Vec3D temp = v1;
-            v1 = v2;
-            v2 = temp;
-
-            Color tempC = c1;
-            c1 = c2;
-            c2 = tempC;
-        }
-
-        int x1 = (int) v1.getX();
-        int y1 = (int) v1.getY();
-
-        int x2 = (int) v2.getX();
-        int y2 = (int) v2.getY();
-
-        int d = 0;
-
-        int dx = Math.abs(x2 - x1);
-        int dy = Math.abs(y2 - y1);
-
-        int dx2 = 2 * dx;
-        int dy2 = 2 * dy;
-
-        int ix = x1 < x2 ? 1 : -1;
-        int iy = y1 < y2 ? 1 : -1;
-
-        int x = x1;
-        int y = y1;
-
-        if (dx >= dy) {
-            while (true) {
-                double t1 = (x - v1.getX()) / (v2.getX() - v1.getX());
-//                Vertex vertexAB = a.mul(1 - t1).add(b.mul(t1));
-                Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
-                System.out.println(vertexAB.x);
-                System.out.println(vertexAB.y);
-                System.out.println(vertexAB.z);
-                System.out.println(vertexAB.w);
-                System.out.println("vykresleni 1");
-                this.drawPixel(x, y, vertexAB.z, vertexAB.getColor());
-                if (x == x2)
-                    break;
-                x += ix;
-                d += dy2;
-                if (d > dx) {
-                    y += iy;
-                    d -= dx2;
-                }
-            }
-        } else {
-            while (true) {
-                double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
-//                Vertex vertexAB = a.mul(1 - t1).add(b.mul(t1));
-                Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
-                System.out.println("vykresleni 2");
-                this.drawPixel(x, y, vertexAB.z, vertexAB.getColor());
-                if (y == y2)
-                    break;
-                y += iy;
-                d += dx2;
-                if (d > dy) {
-                    x += ix;
-                    d -= dy2;
-                }
-            }
-        }
-    }
 
     private void zpracuj(Vertex a, Vertex b, Vertex c){
         Graphics2D g = (Graphics2D) raster.getGraphics();
@@ -412,6 +337,8 @@ public class Renderer3D implements GPURenderer {
         // TODO upravit cyklus
         // TODO dodělat barvy
 
+
+
         for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {
             double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
             double t2 = (y - v1.getY()) / (v3.getY() - v1.getY());
@@ -426,9 +353,7 @@ public class Renderer3D implements GPURenderer {
 
             }
             if (fill)
-            this.fillLine(y, vAB, vAC, c1, c3);
-            else
-            this.drawLine(y,vAB,vAC,c2,c3);
+                this.fillLine(y, vAB, vAC, c1, c3);
 
         }
 
@@ -446,8 +371,7 @@ public class Renderer3D implements GPURenderer {
             }
             if (fill)
                 this.fillLine(y, vBC, vAC, c2, c3);
-            else
-                this.drawLine(y,vBC,vAC,c2,c3);
+
 
         }
 
@@ -473,6 +397,8 @@ public class Renderer3D implements GPURenderer {
 //            fillLine(y, v13, v23, c2, c3);
 //        }
     }
+
+
 
     private void drawLine(int y, Vec3D a, Vec3D b, Color cA, Color cB) {
         if (a.getX() > b.getX()) {
@@ -540,7 +466,7 @@ public class Renderer3D implements GPURenderer {
         }
     }
 
-    private void drawPixel(int x, int y, double z, Color color) {
+    public void drawPixel(int x, int y, double z, Color color) {
 //        System.out.println("Renderer3D - start drawPixel");
 //        System.out.println("z je : " + z);
 //        System.out.println("zBuffer je : " + zBuffer.get(x, y));
@@ -557,7 +483,7 @@ public class Renderer3D implements GPURenderer {
 
     }
 
-    private Vec3D transformToWindow(Vec3D v) {
+    public static Vec3D transformToWindow(Vec3D v) {
         return v.mul(new Vec3D(1, -1, 1)) // Y jde nahoru, chceme dolu
                 .add(new Vec3D(1, 1, 0)) // (0,0) je uprostřed, chceme v rohu
                 // máme <0, 2> -> vynásobíme polovinou velikosti plátna

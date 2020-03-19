@@ -45,7 +45,7 @@ public class Controller3D {
 
         renderer3D.setModel(new Mat4Identity());
         renderer3D.setView(camera.getViewMatrix());
-//        renderer3D.setProjection();
+       // renderer3D.setProjection();
 
         renderer3D.draw(elements, vb, ib, fill);
 
@@ -112,7 +112,7 @@ public class Controller3D {
 
         vb.add(new Vertex(new Point3D(0, 0, 0), Color.CYAN)); //0
 
-        vb.add(new Vertex(new Point3D(1, 0, 0), Color.RED));
+        vb.add(new Vertex(new Point3D(1, 0, 0), Color.cyan));
         vb.add(new Vertex(new Point3D(0, 1, 0), Color.CYAN));
         vb.add(new Vertex(new Point3D(1, 1, 0), Color.CYAN)); // 3
 
@@ -300,7 +300,7 @@ public class Controller3D {
                     case KeyEvent.VK_DOWN:
                         camera = camera.down(0.1);
                         renderer3D.setView(camera.getViewMatrix());
-                       display();
+                        display();
                         break;
                     case KeyEvent.VK_M:
                         fill = !fill;
