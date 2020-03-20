@@ -1,19 +1,23 @@
-package com.mandinec.pgrf2.projekt1.renderer;
+package masek_PGRF2.renderer;
 
-import com.mandinec.pgrf2.projekt1.model.Element;
-import com.mandinec.pgrf2.projekt1.model.ElementType;
-import com.mandinec.pgrf2.projekt1.model.Vertex;
-import com.mandinec.pgrf2.projekt1.view.Raster;
+import masek_PGRF2.helper.Utils;
+import masek_PGRF2.model.Element;
+import masek_PGRF2.model.ElementType;
+import masek_PGRF2.model.Vertex;
+import masek_PGRF2.view.Raster;
 import transforms.*;
 
+import javax.rmi.CORBA.Util;
 import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
+
 public class Renderer3D implements GPURenderer {
 
     private final Raster raster;
-    private Mat4 model, view, projection;
+    private Mat4 model, view;
+    private  Mat4 projection;
     private boolean fill = true;
 
     private ZBuffer<Double> zBuffer;
@@ -24,7 +28,7 @@ public class Renderer3D implements GPURenderer {
         model = new Mat4Identity();
         view = new Mat4Identity();
 
-        projection = new Mat4PerspRH(Math.PI / 4, Raster.HEIGHT / (float) Raster.WIDTH, 1, 200);
+        projection = new Mat4PerspRH(Math.PI / 3, 4 / 3.0, 0.01, 25);
 
         zBuffer = new ZBuffer<>(new Double[Raster.WIDTH][Raster.HEIGHT]);
         zBuffer.clear(1d);
@@ -275,6 +279,8 @@ public class Renderer3D implements GPURenderer {
 
 
     private void drawTriangle(Vertex a, Vertex b, Vertex c) {
+        if (Utils.fastCut(a.getPoint()) && Utils.fastCut(b.getPoint()) && Utils.fastCut(c.getPoint())){
+
         Color c1 = a.getColor();
         Color c2 = b.getColor();
         Color c3 = c.getColor();
@@ -343,7 +349,9 @@ public class Renderer3D implements GPURenderer {
             double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
             double t2 = (y - v1.getY()) / (v3.getY() - v1.getY());
 
+
             Vec3D vAB = v1.mul(1 - t1).add(v2.mul(t1));
+
             Vec3D vAC = v1.mul(1 - t2).add(v3.mul(t2));
 
             if (vAB.getX() > vAC.getX()) {
@@ -396,6 +404,9 @@ public class Renderer3D implements GPURenderer {
 //
 //            fillLine(y, v13, v23, c2, c3);
 //        }
+
+        }
+
     }
 
 
@@ -461,6 +472,8 @@ public class Renderer3D implements GPURenderer {
         for (int x = aX; x < bX; x++) {
             double t = (x - aX) / (bX - a.getX());
             double z = a.getZ() * (1 - t) + b.getZ() * t;
+          //  double s = (x - v.getX()) / (vAC.getX() - vBC.getX());
+           // Vec3D vab = a.mul(1.0 -)
 //            System.out.println("drawPixel");
             drawPixel(x-1, y-1, z, cA);
         }
@@ -470,15 +483,12 @@ public class Renderer3D implements GPURenderer {
 //        System.out.println("Renderer3D - start drawPixel");
 //        System.out.println("z je : " + z);
 //        System.out.println("zBuffer je : " + zBuffer.get(x, y));
-        if (zBuffer.get(x,y) == null){
 
-        }else {
-
-        if (z < zBuffer.get(x, y)) {
+        if (zBuffer.get(x,y) != null && z < zBuffer.get(x, y)) {
 //            System.out.println("Podmínka Renderer3d drawPixel");
             zBuffer.set(z, x, y);
             raster.drawPixel(x, y, color.getRGB());
-        }
+
         }
 
     }

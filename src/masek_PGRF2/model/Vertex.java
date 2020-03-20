@@ -1,4 +1,4 @@
-package com.mandinec.pgrf2.projekt1.model;
+package masek_PGRF2.model;
 
 import transforms.Point3D;
 

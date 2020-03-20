@@ -1,4 +1,4 @@
-package com.mandinec.pgrf2.projekt1.model;
+package masek_PGRF2.model;
 
 public enum ElementType {
     POINT, LINE, TRIANGLE

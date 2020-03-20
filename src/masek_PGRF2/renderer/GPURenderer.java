@@ -1,7 +1,7 @@
-package com.mandinec.pgrf2.projekt1.renderer;
+package masek_PGRF2.renderer;
 
-import com.mandinec.pgrf2.projekt1.model.Element;
-import com.mandinec.pgrf2.projekt1.model.Vertex;
+import masek_PGRF2.model.Element;
+import masek_PGRF2.model.Vertex;
 import transforms.Mat4;
 
 import java.awt.*;

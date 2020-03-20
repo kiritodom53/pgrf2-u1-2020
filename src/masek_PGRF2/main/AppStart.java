@@ -1,7 +1,7 @@
-package com.mandinec.pgrf2.projekt1.main;
+package masek_PGRF2.main;
 
-import com.mandinec.pgrf2.projekt1.controller.Controller3D;
-import com.mandinec.pgrf2.projekt1.view.PGRFWindow;
+import masek_PGRF2.controller.Controller3D;
+import masek_PGRF2.view.PGRFWindow;
 
 import javax.swing.*;
 

@@ -1,17 +1,7 @@
-package com.mandinec.pgrf2.projekt1.view;
-
-import com.mandinec.pgrf2.projekt1.model.Element;
-import com.mandinec.pgrf2.projekt1.model.ElementType;
-import com.mandinec.pgrf2.projekt1.model.Vertex;
-import com.mandinec.pgrf2.projekt1.renderer.Renderer3D;
-import transforms.Mat4;
-import transforms.Mat4RotXYZ;
+package masek_PGRF2.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 public class PGRFWindow extends JFrame {
 

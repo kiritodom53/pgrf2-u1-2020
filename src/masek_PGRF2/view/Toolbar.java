@@ -1,4 +1,4 @@
-package com.mandinec.pgrf2.projekt1.view;
+package masek_PGRF2.view;
 
 import javax.swing.*;
 

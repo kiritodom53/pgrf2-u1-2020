@@ -1,14 +1,13 @@
-package com.mandinec.pgrf2.projekt1.controller;
+package masek_PGRF2.controller;
 
-import com.mandinec.pgrf2.projekt1.model.Element;
-import com.mandinec.pgrf2.projekt1.model.ElementType;
-import com.mandinec.pgrf2.projekt1.model.Vertex;
-import com.mandinec.pgrf2.projekt1.renderer.GPURenderer;
-import com.mandinec.pgrf2.projekt1.renderer.Renderer3D;
-import com.mandinec.pgrf2.projekt1.view.Raster;
+import masek_PGRF2.model.Element;
+import masek_PGRF2.model.ElementType;
+import masek_PGRF2.model.Vertex;
+import masek_PGRF2.renderer.GPURenderer;
+import masek_PGRF2.renderer.Renderer3D;
+import masek_PGRF2.view.Raster;
 import transforms.*;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -28,7 +27,7 @@ public class Controller3D {
     private int newMousePosX;
     private int newMousePosY;
     private boolean fill = true;
-
+    private boolean perspektiv = true;
     private int mx, my;
 
     private List<Element> elements;
@@ -290,7 +289,19 @@ public class Controller3D {
             @Override
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
+                    case KeyEvent.VK_P:
+                        if (perspektiv)
+                            renderer3D.setProjection(new Mat4OrthoRH(7, 8, 0.01, 25));
+                        else
+                            renderer3D.setProjection( new Mat4PerspRH(Math.PI / 3, 4 / 3.0, 0.01, 25));
+                        perspektiv = !perspektiv;
+                        display();
+                        break;
                     case KeyEvent.VK_UP:
+                        camera = camera.up(0.1);
+                        renderer3D.setView(camera.getViewMatrix());
+                        display();
+                        break;
                     case KeyEvent.VK_W:
                         System.out.println("key");
                         camera = camera.down(0.1);

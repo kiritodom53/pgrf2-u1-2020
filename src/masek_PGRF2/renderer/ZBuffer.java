@@ -1,4 +1,4 @@
-package com.mandinec.pgrf2.projekt1.renderer;
+package masek_PGRF2.renderer;
 
 import java.util.Arrays;
 
