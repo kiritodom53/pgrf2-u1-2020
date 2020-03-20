@@ -12,7 +12,7 @@ public class PGRFWindow extends JFrame {
 
     public PGRFWindow() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("PGRF2 cvičení (úterý 13:15)"); // titulek okna
+        setTitle("PGRF2 - 1 úkol - Dominik Mandinec"); // titulek okna
 
         raster = new Raster();
         raster.setFocusable(true);
