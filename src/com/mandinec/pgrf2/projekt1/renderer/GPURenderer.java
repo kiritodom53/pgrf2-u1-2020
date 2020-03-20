@@ -2,6 +2,7 @@ package com.mandinec.pgrf2.projekt1.renderer;
 
 import com.mandinec.pgrf2.projekt1.model.Element;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
+import com.mandinec.pgrf2.projekt1.objects.Solid;
 import transforms.Mat4;
 
 import java.awt.*;
@@ -10,6 +11,8 @@ import java.util.List;
 public interface GPURenderer {
 
     void draw(List<Element> elements, List<Vertex> vb, List<Integer> ib);
+
+    void draw(Solid solid);
 
     void clear();
 

@@ -1,5 +1,7 @@
 package com.mandinec.pgrf2.projekt1.view;
 
+import com.mandinec.pgrf2.projekt1.controller.Controller3D;
+
 import javax.swing.*;
 
 /**
@@ -11,15 +13,6 @@ public class Toolbar {
     private JButton btnPer;
     private JButton btnOr;
     private JButton btnReset;
-    private JButton btnCube;
-    private JButton btnTetra;
-    private JButton btnGrid;
-    private JButton btnPyramid;
-    private JButton btnBicubicGrid;
-
-    private JRadioButton rbBezier;
-    private JRadioButton rbCoons;
-    private JRadioButton rbFerguson;
 
     private ButtonGroup bg;
 
@@ -33,47 +26,17 @@ public class Toolbar {
         btnPer = new JButton();
         btnOr = new JButton();
         btnReset = new JButton();
-        btnCube = new JButton();
-        btnTetra = new JButton();
-        btnGrid = new JButton();
-        btnPyramid = new JButton();
-        btnBicubicGrid = new JButton();
 
         bg = new ButtonGroup();
-
-        rbBezier = new JRadioButton();
-        rbCoons = new JRadioButton();
-        rbFerguson = new JRadioButton();
-
-        bg.add(rbBezier);
-        bg.add(rbCoons);
-        bg.add(rbFerguson);
 
         btnPer.setText("Perspectivní");
         btnOr.setText("Ortogonální");
         btnReset.setText("Reset");
-        btnCube.setText("Cube");
-        btnTetra.setText("Tetrahedron");
-        btnGrid.setText("Grid");
-        btnPyramid.setText("Pyramid");
-        btnBicubicGrid.setText("Bikubická plocha");
-
-        rbBezier.setText("Bezier");
-        rbCoons.setText("Coons");
-        rbFerguson.setText("Ferguson");
 
         btnPer.setFocusable(false);
         btnOr.setFocusable(false);
         btnReset.setFocusable(false);
-        btnCube.setFocusable(false);
-        btnTetra.setFocusable(false);
-        btnGrid.setFocusable(false);
-        btnPyramid.setFocusable(false);
         toolBar.setFocusable(false);
-        btnBicubicGrid.setFocusable(false);
-        rbBezier.setFocusable(false);
-        rbCoons.setFocusable(false);
-        rbFerguson.setFocusable(false);
 
         this.initComponents();
     }
@@ -82,34 +45,11 @@ public class Toolbar {
         toolBar.add(btnReset);
         toolBar.add(btnPer);
         toolBar.add(btnOr);
-        toolBar.add(btnCube);
-        toolBar.add(btnTetra);
-        toolBar.add(btnGrid);
-        toolBar.add(btnPyramid);
-        toolBar.add(rbBezier);
-        toolBar.add(rbCoons);
-        toolBar.add(rbFerguson);
-        toolBar.add(btnBicubicGrid);
     }
 
-    public JRadioButton getRbBezier() {
-        return rbBezier;
-    }
-
-    public JRadioButton getRbCoons() {
-        return rbCoons;
-    }
-
-    public JRadioButton getRbFerguson() {
-        return rbFerguson;
-    }
 
     public JToolBar getToolBar() {
         return toolBar;
-    }
-
-    public JButton getBtnBicubicGrid() {
-        return btnBicubicGrid;
     }
 
     public JButton getBtnPer() {
@@ -124,19 +64,4 @@ public class Toolbar {
         return btnReset;
     }
 
-    public JButton getBtnCube() {
-        return btnCube;
-    }
-
-    public JButton getBtnTetra() {
-        return btnTetra;
-    }
-
-    public JButton getBtnGrid() {
-        return btnGrid;
-    }
-
-    public JButton getBtnPyramid() {
-        return btnPyramid;
-    }
 }

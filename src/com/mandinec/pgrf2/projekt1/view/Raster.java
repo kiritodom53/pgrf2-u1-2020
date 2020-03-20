@@ -15,7 +15,7 @@ public class Raster extends JPanel {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
 
-    Raster() {
+    public Raster() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         // inicializace image, nastavení rozměrů (nastavení typu - pro nás nedůležité)
         img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
