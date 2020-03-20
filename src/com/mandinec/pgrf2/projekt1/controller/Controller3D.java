@@ -414,6 +414,20 @@ public class Controller3D {
                         renderer3D.setView(camera.getViewMatrix());
                         display();
                         break;
+                    case KeyEvent.VK_O:
+                        Mat4 scale;
+                        scale = new Mat4Scale(1.1, 1.1, 1.1);
+                        renderer3D.setModel(renderer3D.getModel().mul(scale));
+                        renderer3D.setView(camera.getViewMatrix());
+                        display();
+                        break;
+                    case KeyEvent.VK_P:
+                        Mat4 scale2;
+                        scale2 = new Mat4Scale(0.9, 0.9, 0.9);
+                        renderer3D.setModel(renderer3D.getModel().mul(scale2));
+                        renderer3D.setView(camera.getViewMatrix());
+                        display();
+                        break;
                     // dodělat ovládání
                 }
             }
