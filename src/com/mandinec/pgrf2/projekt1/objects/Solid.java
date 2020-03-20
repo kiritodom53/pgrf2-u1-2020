@@ -36,6 +36,10 @@ public abstract class Solid {
         return defaultColor;
     }
 
+    public void setTransMat(Mat4 transMat) {
+        this.transMat = transMat;
+    }
+
     public Mat4 getTransMat() {
         return transMat;
     }

@@ -3,10 +3,8 @@ package com.mandinec.pgrf2.projekt1.controller;
 import com.mandinec.pgrf2.projekt1.model.Element;
 import com.mandinec.pgrf2.projekt1.model.ElementType;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
+import com.mandinec.pgrf2.projekt1.objects.*;
 import com.mandinec.pgrf2.projekt1.objects.Bicubic;
-import com.mandinec.pgrf2.projekt1.objects.Cube;
-import com.mandinec.pgrf2.projekt1.objects.Solid;
-import com.mandinec.pgrf2.projekt1.objects.Triangle;
 import com.mandinec.pgrf2.projekt1.renderer.GPURenderer;
 import com.mandinec.pgrf2.projekt1.renderer.Renderer3D;
 import com.mandinec.pgrf2.projekt1.renderer.Shader;
@@ -34,7 +32,7 @@ public class Controller3D {
     private int newMousePosX;
     private int newMousePosY;
 
-    private Cube cube = new Cube();
+    //private Cube cube = new Cube();
 
     private List<Solid> solids = new ArrayList<>();
 
@@ -60,14 +58,18 @@ public class Controller3D {
         //renderer3D.setModel(new Mat4Identity());
         renderer3D.setModel(renderer3D.getModel());
         renderer3D.setView(camera.getViewMatrix());
-        //renderer3D.setShader(testShader);
+        renderer3D.setShader(testShader);
 //        renderer3D.setProjection();
-        //renderer3D.setShader(vertex -> new Color(Math.round(vertex.x % 255), 0, 0));
+        renderer3D.setShader(vertex -> new Color(Math.round(vertex.x % 255), 0, 0));
+
 
         //renderer3D.draw(elements, vb, ib);
         for (Solid solid : solids) {
+
             renderer3D.draw(solid);
         }
+
+
         //renderer3D.draw(new Cube());
 
         //renderer3D.setModel(new Mat4Transl(0, 0, 0));
@@ -224,30 +226,37 @@ public class Controller3D {
 //        vb.addAll(cube.getVb());
 //        elements.addAll(cube.getElemetns());
 
-        solids.add(new Cube());
+        //solids.add(new Cube());
+
         solids.add(new Triangle());
+        solids.add(new Xyz());
+
+
+
+
+
         //solids.add(new Bicubic(Cubic.FERGUSON));
 
 
-        System.out.println("ib");
-        for (Integer integer : ib) {
-            System.out.println(integer);
-        }
-        System.out.println("vb");
-        for (Vertex vertex : vb) {
-//            System.out.println(vertex.x);
-//            System.out.println(vertex.y);
-//            System.out.println(vertex.w);
-//            System.out.println(vertex.z);
-//            System.out.println(vertex.getPoint());
-//            System.out.println(vertex.getColor());
-        }
-        System.out.println("element");
-        for (Element element : elements) {
-//            System.out.println(element.getElementType());
-//            System.out.println(element.getStart());
-//            System.out.println(element.getCount());
-        }
+//        System.out.println("ib");
+//        for (Integer integer : ib) {
+//            System.out.println(integer);
+//        }
+//        System.out.println("vb");
+//        for (Vertex vertex : vb) {
+////            System.out.println(vertex.x);
+////            System.out.println(vertex.y);
+////            System.out.println(vertex.w);
+////            System.out.println(vertex.z);
+////            System.out.println(vertex.getPoint());
+////            System.out.println(vertex.getColor());
+//        }
+//        System.out.println("element");
+//        for (Element element : elements) {
+////            System.out.println(element.getElementType());
+////            System.out.println(element.getStart());
+////            System.out.println(element.getCount());
+//        }
 
         //renderer3D.draw(elements, vb, ib);
 
@@ -292,40 +301,48 @@ public class Controller3D {
             @Override
             public void mousePressed(MouseEvent g) {
                 click = g.getButton();
-                System.out.println("click1");
-                raster.addMouseMotionListener(new MouseAdapter() {
-                    @Override
-                    public void mouseDragged(MouseEvent e) {
-                        newMousePosX = mousePositionX;
-                        newMousePosY = mousePositionY;
+//                System.out.println("click1");
 
-                        System.out.println("dragged");
-                        mousePositionX = e.getX();
-                        mousePositionY = e.getY();
-                        if (click == MouseEvent.BUTTON1) {
-                            System.out.println("click2");
-                            //System.out.println(-(mousePositionX - newMousePosX));
-                            //System.out.println(-(mousePositionX - newMousePosX) * Math.PI / 360);
-                            //camera = camera.addAzimuth(-0.1);
-                            //camera = camera.withAzimuth(-(mousePositionX - newMousePosX) * Math.PI / 360);
-                            //camera = camera.addZenith(-0.1);
-                            //camera = camera.withZenith(-(mousePositionY - newMousePosY) * Math.PI / 360);
-                            Mat4 rot = new Mat4RotXYZ(0, -(mousePositionY - newMousePosY) * 0.02, (mousePositionX - newMousePosX) * 0.02);
-                            renderer3D.setModel(renderer3D.getModel().mul(rot));
-                        } /*else if (click == MouseEvent.BUTTON3) {
+                }
+            });
+
+        raster.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                newMousePosX = mousePositionX;
+                newMousePosY = mousePositionY;
+
+//                        System.out.println("dragged");
+                mousePositionX = e.getX();
+                mousePositionY = e.getY();
+                if (click == MouseEvent.BUTTON1) {
+//                            System.out.println("click2");
+                    //System.out.println(-(mousePositionX - newMousePosX));
+                    //System.out.println(-(mousePositionX - newMousePosX) * Math.PI / 360);
+                    //camera = camera.addAzimuth(-0.1);
+                    //camera = camera.withAzimuth(-(mousePositionX - newMousePosX) * Math.PI / 360);
+                    //camera = camera.addZenith(-0.1);
+                    //camera = camera.withZenith(-(mousePositionY - newMousePosY) * Math.PI / 360);
+                    Mat4 rot = new Mat4RotXYZ(0, -(mousePositionY - newMousePosY) * 0.02, (mousePositionX - newMousePosX) * 0.02);
+//                            if (solid.isTransferable()) {
+//                                this.model = solid.getTransMat().mul(model);
+//                            } else {
+//                                this.model = new Mat4Identity();
+//                            }
+                    //renderer3D.setModel(renderer3D.getModel().mul(rot));
+                    renderer3D.setModel(renderer3D.getModel().mul(rot));
+                } /*else if (click == MouseEvent.BUTTON3) {
                             Mat4 rot = new Mat4RotXYZ(0, -(mousePositionY - newMousePosY) * 0.02, (mousePositionX - newMousePosX) * 0.02);
                             model = model.mul(rot);
                         }*/
-                            //renderer3D.setView(camera.getViewMatrix());
-                            renderer3D.clear();
-                            //renderer3D.draw(elements, vb, ib);
-                        for (Solid solid : solids) {
-                            renderer3D.draw(solid);
-                        }
-                        }
-                    });
+                //renderer3D.setView(camera.getViewMatrix());
+                renderer3D.clear();
+                //renderer3D.draw(elements, vb, ib);
+                for (Solid solid : solids) {
+                    renderer3D.draw(solid);
                 }
-            });
+            }
+        });
 
 
         /*raster.addMouseMotionListener(new MouseAdapter() {

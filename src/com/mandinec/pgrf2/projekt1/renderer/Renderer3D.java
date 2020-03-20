@@ -5,18 +5,19 @@ import com.mandinec.pgrf2.projekt1.model.ElementType;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
 import com.mandinec.pgrf2.projekt1.objects.Solid;
 import com.mandinec.pgrf2.projekt1.raster.Line;
+import com.mandinec.pgrf2.projekt1.raster.TriangleRas;
 import com.mandinec.pgrf2.projekt1.view.Raster;
 import transforms.*;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Optional;
 
 public class Renderer3D implements GPURenderer {
 
     private final Raster raster;
     private Mat4 model, view, projection;
     private Line line; // ehm
+    private TriangleRas triangle; // ehm
 
     private ZBuffer<Double> zBuffer;
 
@@ -33,6 +34,8 @@ public class Renderer3D implements GPURenderer {
 
         zBuffer = new ZBuffer<>(new Double[Raster.WIDTH][Raster.HEIGHT]);
         zBuffer.clear(20d); // ehm
+
+
     }
 
     @Override
@@ -53,6 +56,7 @@ public class Renderer3D implements GPURenderer {
                     prepareTriangle(v1, v2, v3);
                 }
             } else if (element.getElementType() == ElementType.LINE) {
+//                System.out.println("Jdeme si pro line");
                 for (int i = start; i < count + start; i += 2) {
 //                    final Vertex v1 = vb.get(ib.get(i));
                     final Integer i1 = ib.get(i);
@@ -70,9 +74,20 @@ public class Renderer3D implements GPURenderer {
 
     @Override
     public void draw(Solid solid) {
+//        System.out.println(solid.getClass());
+//        System.out.println(solid.isTransferable());
+//        if (solid.isTransferable()) {
+//            this.model = solid.getTransMat().mul(getModel());
+//        } else {
+//            this.model = new Mat4Identity();
+//            //this.model = solid.getTransMat();
+//        }
+        //this.model = solid.getTransMat().mul(getModel());
+
         for (Element element : solid.getElemetns()) {
             final int start = element.getStart();
             final int count = element.getCount();
+
             if (element.getElementType() == ElementType.TRIANGLE) {
                 for (int i = start; i < count + start; i += 3) {
 //                    final Vertex v1 = vb.get(ib.get(i));
@@ -86,6 +101,7 @@ public class Renderer3D implements GPURenderer {
 //                    lineRaster = new LineRaster(this); // ehm
 //                    rlt = new RendererLineTriangle(raster);
                     line = new Line(raster);
+                    triangle = new TriangleRas(raster);
                     prepareTriangle(v1, v2, v3);
                 }
             } else if (element.getElementType() == ElementType.LINE) {
@@ -95,7 +111,9 @@ public class Renderer3D implements GPURenderer {
                     final Integer i2 = solid.getIb().get(i + 1);
                     final Vertex v1 = solid.getVb().get(i1);
                     final Vertex v2 = solid.getVb().get(i2);
-//                    System.out.println("nevim");
+//                    System.out.println("THIS IS LINE");
+                    line = new Line(raster);
+                    triangle = new TriangleRas(raster);
                     prepareLine(v1, v2);
                 }
             } else {
@@ -107,14 +125,56 @@ public class Renderer3D implements GPURenderer {
     private void prepareLine(Vertex a, Vertex b){
 //        a = new Vertex(a.getPoint().mul(model).mul(view).mul(projection), a.getColor());
 //        b = new Vertex(b.getPoint().mul(model).mul(view).mul(projection), b.getColor());
+        a = new Vertex(a.getPoint().mul(model).mul(view).mul(projection), a.getColor());
+        b = new Vertex(b.getPoint().mul(model).mul(view).mul(projection), b.getColor());
+
+
         if (-a.w > a.x && -b.w > b.x) return;
         if (a.x > a.w && b.x > b.w) return;
 //        System.out.println("1 podminka orezeani ok");
         // TODO y, z - HOTOVO
         if (-a.w > a.y && -b.w > b.y) return;
         if (a.y > a.w && b.y > b.w) return;
+
+        if (a.z < b.z) {
+            Vertex temp = a;
+            a = b;
+            b = temp;
+        }
+
+        if (a.z < 0) {
+            // a.z je největší a je záporné, takže celý trojúhelník není vidět
+//            System.out.println("Nejdu kreslit");
+            return;
+        } else if (b.z < 0) {
+
+            double t = a.getPoint().getZ() / (a.getPoint().getZ() - b.getPoint().getZ());
+            Vertex ab = new Vertex(a.getPoint().mul(1 - t).add(b.getPoint().mul(t)), b.getColor());
+            // nekorektně barva, měla by se také interpolovat; volitelně
+
+
+//            Vertex ab = calculateTriangleCut(a, b);
+//            Vertex ac = calculateTriangleCut(a, c);
+
+            // lze vytvořit funkci pro ořezání, aby se neopakoval kód
+//            System.out.println("Jdu kreslit 1");
+            //drawTriangle(a, ab, ac);
+            //line.draw(a, ab);
+        } else {
+//            System.out.println("Jdu kreslit 3");
+//            System.out.println("a.z : " + a.z);
+//            System.out.println("b.z : " + b.z);
+            //drawTriangle(a, b, c);
+//            triangle.drawTriangle(a, b, c);
+            line.draw(a, b);
+        }
+
+
+
+
+
         //this.drawLine(a, b);
-        System.out.println("Prepare line");
+//        System.out.println("Prepare line");
 //        a = new Vertex(a.getPoint().mul(model).mul(view).mul(projection), a.getColor());
 //        b = new Vertex(b.getPoint().mul(model).mul(view).mul(projection), b.getColor());
 //
@@ -184,7 +244,7 @@ public class Renderer3D implements GPURenderer {
         if (0 > a.z && 0 > b.z && 0 > c.z) return;
         if (a.z > a.w && b.z > b.w && c.z > c.w) return;
 
-        System.out.println("3 podminka orezeani ok");
+//        System.out.println("3 podminka orezeani ok");
         // 3. seřazení vrcholů podle souřadnice Z
 
         if (a.z < b.z) {
@@ -224,11 +284,13 @@ public class Renderer3D implements GPURenderer {
 //            Vertex ac = calculateTriangleCut(a, c);
 
             // lze vytvořit funkci pro ořezání, aby se neopakoval kód
-            System.out.println("Jdu kreslit 1");
+//            System.out.println("Jdu kreslit 1");
             //drawTriangle(a, ab, ac);
-            line.draw(a, ab);
-            line.draw(ab, ac);
-            line.draw(ac, a);
+            triangle.drawTriangle(a, ab, ac);
+
+//            line.draw(a, ab);
+//            line.draw(ab, ac);
+//            line.draw(ac, a);
         } else if (c.z < 0) {
             // TODO ac, bc - HOTOVO
             double t = b.getPoint().getZ() / (b.getPoint().getZ() - c.getPoint().getZ());
@@ -241,27 +303,31 @@ public class Renderer3D implements GPURenderer {
 //            Vertex bc = calculateTriangleCut(b, c);
 
 
-            System.out.println("Jdu kreslit 2");
+//            System.out.println("Jdu kreslit 2");
 //            drawTriangle(a, b, ac);
 //            drawTriangle(b, ac, bc);
+            triangle.drawTriangle(a, b, ac);
+            triangle.drawTriangle(b, ac, bc);
 
-            line.draw(a, b);
-            line.draw(b, ac);
-            line.draw(a, ac);
 
-            line.draw(b, ac);
-            line.draw(ac, bc);
-            line.draw(bc, b);
+//            line.draw(a, b);
+//            line.draw(b, ac);
+//            line.draw(a, ac);
+//
+//            line.draw(b, ac);
+//            line.draw(ac, bc);
+//            line.draw(bc, b);
 
         } else {
-            System.out.println("Jdu kreslit 3");
-            System.out.println("a.z : " + a.z);
-            System.out.println("b.z : " + b.z);
-            System.out.println("c.z : " + c.z);
-//            drawTriangle(a, b, c);
-            line.draw(a, b);
-            line.draw(a, c);
-            line.draw(b, c);
+//            System.out.println("Jdu kreslit 3");
+//            System.out.println("a.z : " + a.z);
+//            System.out.println("b.z : " + b.z);
+//            System.out.println("c.z : " + c.z);
+            //drawTriangle(a, b, c);
+            triangle.drawTriangle(a, b, c);
+//            line.draw(a, b);
+//            line.draw(a, c);
+//            line.draw(b, c);
         }
     }
 
@@ -339,7 +405,7 @@ public class Renderer3D implements GPURenderer {
 //        }
 //    }
 
-    private Boolean orez(Point3D point){
+    protected Boolean cut(Point3D point){
         return -point.getW() <= point.getY() &&
                 -point.getW() <= point.getX() &&
                 point.getY() <= point.getW() &&
@@ -508,7 +574,7 @@ public class Renderer3D implements GPURenderer {
         drawPixel((int)b.getX(), y, b.getZ(), cA);
     }
 
-    private void fillLine(int y, Vec3D a, Vec3D b, Color cA, Color cB) {
+    protected void fillLine(int y, Vec3D a, Vec3D b, Color cA, Color cB) {
 //        System.out.println("start fillLine");
         if (a.getX() > b.getX()) {
             Vec3D temp = a;

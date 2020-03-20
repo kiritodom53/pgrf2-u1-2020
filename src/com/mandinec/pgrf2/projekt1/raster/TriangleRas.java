@@ -8,14 +8,14 @@ import transforms.Vec3D;
 import java.awt.*;
 import java.util.Optional;
 
-public class Triangle extends Renderer3D {
-    public Triangle(Raster raster) {
+public class TriangleRas extends Renderer3D {
+    public TriangleRas(Raster raster) {
         super(raster);
     }
 
-    private void drawTriangle(Vertex a, Vertex b, Vertex c) {
+    public void drawTriangle(Vertex a, Vertex b, Vertex c) {
 
-        //if (orez(a.getPoint()) && orez(b.getPoint()) && orez(c.getPoint())){
+        if (cut(a.getPoint()) && cut(b.getPoint()) && cut(c.getPoint())){
             Color c1 = a.getColor();
             Color c2 = b.getColor();
             Color c3 = c.getColor();
@@ -131,8 +131,9 @@ public class Triangle extends Renderer3D {
 //            fillLine(y, v13, v23, c2, c3);
 //        }
 
-        //}
+        }
 
 
     }
+
 }
