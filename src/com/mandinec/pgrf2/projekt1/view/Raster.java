@@ -73,5 +73,4 @@ public class Raster extends JPanel {
                 color
         );
     }
-
 }

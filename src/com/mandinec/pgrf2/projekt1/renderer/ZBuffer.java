@@ -34,5 +34,4 @@ class ZBuffer<T extends Number> {
             */
         }
     }
-
 }

@@ -16,27 +16,20 @@ public class Cube extends Solid{
 
         elements.add(new Element(ElementType.TRIANGLE, 36, 0));
 
-
-        vb.add(new Vertex(new Point3D(0, 0, 0), Color.CYAN)); //0
-
+        vb.add(new Vertex(new Point3D(0, 0, 0), Color.CYAN));
         vb.add(new Vertex(new Point3D(1, 0, 0), Color.CYAN));
         vb.add(new Vertex(new Point3D(0, 1, 0), Color.CYAN));
-        vb.add(new Vertex(new Point3D(1, 1, 0), Color.CYAN)); // 3
-
+        vb.add(new Vertex(new Point3D(1, 1, 0), Color.CYAN));
         vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN)); // 5
-
+        vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN));
         vb.add(new Vertex(new Point3D(1, 0, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN)); // 7
-
+        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN));
         vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(1, 1, 1), Color.CYAN)); // 9
-
         vb.add(new Vertex(new Point3D(1, 1, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(1, 0, 1), Color.CYAN)); // 11
-
+        vb.add(new Vertex(new Point3D(1, 1, 1), Color.CYAN));
+        vb.add(new Vertex(new Point3D(1, 0, 1), Color.CYAN));
         vb.add(new Vertex(new Point3D(0, 1, 1), Color.CYAN));
-        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN)); // 13
+        vb.add(new Vertex(new Point3D(0, 0, 1), Color.CYAN));
 
         ib.add(0);
         ib.add(1);

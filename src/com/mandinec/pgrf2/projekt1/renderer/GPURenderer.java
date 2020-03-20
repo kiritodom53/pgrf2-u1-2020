@@ -10,13 +10,15 @@ import java.util.List;
 
 public interface GPURenderer {
 
-    void draw(List<Element> elements, List<Vertex> vb, List<Integer> ib);
-
     void draw(Solid solid);
 
     void clear();
 
     Mat4 getModel();
+
+    boolean isWireframeModel();
+
+    void setWireframeModel(boolean wireframeModel);
 
     void setModel(Mat4 model);
 
@@ -29,5 +31,4 @@ public interface GPURenderer {
     void setProjection(Mat4 projection);
 
     void setShader(Shader<Vertex, Color> shader);
-
 }

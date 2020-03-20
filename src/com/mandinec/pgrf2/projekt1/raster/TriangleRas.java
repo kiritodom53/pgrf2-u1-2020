@@ -15,7 +15,7 @@ public class TriangleRas extends Renderer3D {
 
     public void drawTriangle(Vertex a, Vertex b, Vertex c) {
 
-        if (cut(a.getPoint()) && cut(b.getPoint()) && cut(c.getPoint())){
+        if (cut(a.getPoint()) && cut(b.getPoint()) && cut(c.getPoint())) {
             Color c1 = a.getColor();
             Color c2 = b.getColor();
             Color c3 = c.getColor();
@@ -62,21 +62,6 @@ public class TriangleRas extends Renderer3D {
                 c1 = c2;
                 c2 = tempC;
             }
-//        System.out.println("PO");
-//        System.out.println(v1.getX());
-//        System.out.println(v2.getX());
-//        System.out.println(v3.getX());
-//        System.out.println();
-//        System.out.println(v1.getY());
-//        System.out.println(v2.getY());
-//        System.out.println(v3.getY());
-//        System.out.println();
-//        System.out.println(v1.getZ());
-//        System.out.println(v2.getZ());
-//        System.out.println(v3.getZ());
-
-            // TODO upravit cyklus
-            // TODO dodělat barvy
 
             for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {
                 double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
@@ -89,7 +74,6 @@ public class TriangleRas extends Renderer3D {
                     Vec3D temp = vAB;
                     vAB = vAC;
                     vAC = temp;
-
                 }
                 this.fillLine(y, vAB, vAC, c1, c3);
             }
@@ -108,32 +92,6 @@ public class TriangleRas extends Renderer3D {
                 }
                 this.fillLine(y, vBC, vAC, c2, c3);
             }
-
-//        for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {
-//            double t12 = (y - v1.getY()) / (v2.getY() - v1.getY());
-////            double x12 = v1.getX() * (1 - t12) + v2.getX() * t12;
-////            double z12 = v1.getZ() * (1 - t12) + v2.getZ() * t12;
-//            Vec3D v12 = v1.mul(1 - t12).add(v2.mul(t12));
-//
-//            double t13 = (y - v1.getY()) / (v3.getY() - v1.getY());
-//            Vec3D v13 = v1.mul(1 - t13).add(v3.mul(t13));
-//
-//            fillLine(y, v12, v13, c1, c3);
-//        }
-//
-//        for (int y = (int) (v2.getY() + 1); y < v3.getY(); y++) {
-//            double t13 = (y - v1.getY()) / (v3.getY() - v1.getY());
-//            Vec3D v13 = v1.mul(1 - t13).add(v3.mul(t13));
-//
-//            double t23 = (y - v2.getY()) / (v3.getY() - v2.getY());
-//            Vec3D v23 = v2.mul(1 - t23).add(v3.mul(t23));
-//
-//            fillLine(y, v13, v23, c2, c3);
-//        }
-
         }
-
-
     }
-
 }

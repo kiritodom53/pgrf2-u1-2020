@@ -4,7 +4,7 @@ import transforms.Point3D;
 
 import java.awt.*;
 
-public class Vertex{
+public class Vertex {
 
     private final Point3D point;
     private final Color color;

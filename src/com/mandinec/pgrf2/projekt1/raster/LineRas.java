@@ -8,13 +8,13 @@ import transforms.Vec3D;
 import java.awt.*;
 import java.util.Optional;
 
-public class Line extends Renderer3D {
-    public Line(Raster raster) {
+public class LineRas extends Renderer3D {
+    public LineRas(Raster raster) {
         super(raster);
     }
 
     public void draw(Vertex a, Vertex b) {
-        if (cut(a.getPoint()) && cut(b.getPoint())){
+        if (cut(a.getPoint()) && cut(b.getPoint())) {
             Color c1 = a.getColor();
             Color c2 = b.getColor();
 
@@ -28,10 +28,8 @@ public class Line extends Renderer3D {
             Vec3D v2 = d2.get();
 
 
-
             v1 = transformToWindow(v1);
             v2 = transformToWindow(v2);
-
 
             int x1 = (int) v1.getX();
             int y1 = (int) v1.getY();
@@ -53,16 +51,8 @@ public class Line extends Renderer3D {
 
             if (dx >= dy) {
                 while (true) {
-                    //plot(g, x, y);
                     double t = (x - v1.getX()) / (v2.getX() - v1.getX());
-                    Vertex v = new Vertex(a.getPoint().mul(1 - t).add(b.getPoint().mul(t)), c1);
-                    int z = (int)a.getPoint().mul(1 - t).add(b.getPoint().mul(t)).getZ();
-
-                    double t1 = (x - v1.getX()) / (v2.getX() - v1.getX());
-                    //Vertex vertexAB = a.mul(1 - t1).add(b.mul(t1));
-                    Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
-
-
+                    int z = (int) a.getPoint().mul(1 - t).add(b.getPoint().mul(t)).getZ();
                     drawPixel(x, y, z, c1);
                     if (x == x2)
                         break;
@@ -76,7 +66,7 @@ public class Line extends Renderer3D {
             } else {
                 while (true) {
                     double t = (y - v1.getY()) / (v2.getY() - v1.getY());
-                    int z = (int)a.getPoint().mul(1 - t).add(b.getPoint().mul(t)).getZ();
+                    int z = (int) a.getPoint().mul(1 - t).add(b.getPoint().mul(t)).getZ();
                     drawPixel(x, y, z, c1);
                     if (y == y2)
                         break;
@@ -90,5 +80,4 @@ public class Line extends Renderer3D {
             }
         }
     }
-
 }

@@ -15,7 +15,6 @@ public abstract class Solid {
     protected List<Integer> colors;
     protected Mat4 transMat = new Mat4Identity();
     protected boolean transferable = true;
-    private int defaultColor = 0x000000;
 
     public List<Vertex> getVb() {
         return vb;
@@ -29,23 +28,12 @@ public abstract class Solid {
         return ib;
     }
 
-    public int getColor(int index) {
-        if (colors != null) {
-            return colors.get(index);
-        }
-        return defaultColor;
-    }
-
     public void setTransMat(Mat4 transMat) {
         this.transMat = transMat;
     }
 
     public Mat4 getTransMat() {
         return transMat;
-    }
-
-    public void setColor(int color) {
-        this.defaultColor = color;
     }
 
     public boolean isTransferable() {

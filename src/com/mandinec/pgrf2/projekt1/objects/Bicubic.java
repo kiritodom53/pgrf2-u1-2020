@@ -9,11 +9,11 @@ import transforms.Point3D;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Bicubic extends Solid{
+public class Bicubic extends Solid {
     private transforms.Bicubic bc;
     private Mat4 gridType;
 
-    public Bicubic(Mat4 type){
+    public Bicubic(Mat4 type) {
         gridType = type;
         ib = new ArrayList<>();
         vb = new ArrayList<>();
@@ -43,44 +43,33 @@ public class Bicubic extends Solid{
         bc = new transforms.Bicubic(gridType, points);
         int counter = 0;
 
-        for (float i = 0; i < 1.0; i += .1) {
+        for (float i = 0f; i < 1f; i += 0.1) { // zhuštění
             counter++;
-            //System.out.println("i : " + i);
-            for (float j = 0; j < 1.0; j += .1) { // zhuštění
-                vb.add(new Vertex(bc.compute(i,j), Color.BLUE));
+            for (float j = 0f; j < 1f; j += 0.1) { // zhuštění
+                vb.add(new Vertex(bc.compute(i, j), Color.BLUE));
             }
         }
-
-        // IndexBuffer
-        System.out.println("ct : " + counter);
-        System.out.println("vb : " + vb.size());
-        //counter = vb.size();
 
         int count = 0;
 
         for (int i = 0; i < vb.size(); i++) {
-            for (int j = 0; j < counter; j++) {
-                if (j < counter - 1){
-                    ib.add((i * counter) + j);
-                    ib.add((i * counter) + j + 1);
-                    ib.add((i * counter) + j + (int) Math.sqrt(vb.size()));
-                    count++;
+            if ((i + 1) % counter != 0) {
+                if ((i + counter) < vb.size()) {
+                    ib.add(i);
+                    ib.add(i + 1);
+                    ib.add(i + counter);
+                    count += 1;
+                    if ((i - counter) < vb.size()) {
+                        ib.add(i + 1 + counter);
+                        ib.add(i + 1);
+                        ib.add(i + counter);
+                        count += 1;
+                    }
                 }
-                if (i < counter - 1){
-                    ib.add((i * counter) + j);
-                    ib.add(((i + 1) * counter) + j);
-                    ib.add(((i + 1 + (int) Math.sqrt(vb.size())) * counter) + j);
-                    count++;
-                }
+
             }
         }
 
-
-        System.out.println("count : " + count);
-
         elements.add(new Element(ElementType.TRIANGLE, count, 0));
-
-
-
     }
 }
