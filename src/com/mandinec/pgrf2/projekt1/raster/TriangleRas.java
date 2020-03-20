@@ -3,6 +3,7 @@ package com.mandinec.pgrf2.projekt1.raster;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
 import com.mandinec.pgrf2.projekt1.renderer.Renderer3D;
 import com.mandinec.pgrf2.projekt1.view.Raster;
+import transforms.Col;
 import transforms.Vec3D;
 
 import java.awt.*;
@@ -16,9 +17,13 @@ public class TriangleRas extends Renderer3D {
     public void drawTriangle(Vertex a, Vertex b, Vertex c) {
 
         if (cut(a.getPoint()) && cut(b.getPoint()) && cut(c.getPoint())){
-            Color c1 = a.getColor();
-            Color c2 = b.getColor();
-            Color c3 = c.getColor();
+//            Color c1 = a.getColor();
+//            Color c2 = b.getColor();
+//            Color c3 = c.getColor();
+
+            Col c11 = new Col(a.getPoint());
+            Col c22 = new Col(b.getPoint());
+            Col c33 = new Col(c.getPoint());
 
             Optional<Vec3D> d1 = a.getPoint().dehomog();
             Optional<Vec3D> d2 = b.getPoint().dehomog();
@@ -40,27 +45,27 @@ public class TriangleRas extends Renderer3D {
                 v1 = v2;
                 v2 = temp;
 
-                Color tempC = c1;
-                c1 = c2;
-                c2 = tempC;
+//                Color tempC = c1;
+//                c1 = c2;
+//                c2 = tempC;
             }
             if (v2.getY() > v3.getY()) {
                 Vec3D temp = v2;
                 v2 = v3;
                 v3 = temp;
 
-                Color tempC = c2;
-                c2 = c3;
-                c3 = tempC;
+//                Color tempC = c2;
+//                c2 = c3;
+//                c3 = tempC;
             }
             if (v1.getY() > v2.getY()) {
                 Vec3D temp = v1;
                 v1 = v2;
                 v2 = temp;
 
-                Color tempC = c1;
-                c1 = c2;
-                c2 = tempC;
+//                Color tempC = c1;
+//                c1 = c2;
+//                c2 = tempC;
             }
 //        System.out.println("PO");
 //        System.out.println(v1.getX());
@@ -85,13 +90,20 @@ public class TriangleRas extends Renderer3D {
                 Vec3D vAB = v1.mul(1 - t1).add(v2.mul(t1));
                 Vec3D vAC = v1.mul(1 - t2).add(v3.mul(t2));
 
+//                Vertex verAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c11.mul(c22));
+//                Vertex verAC = new Vertex(a.getPoint().mul(1 - t1).add(c.getPoint().mul(t1)), c11.mul(c33));
+
+                Vertex verAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c11.mul(1 - t1).add(c22.mul(t1)));
+                Vertex verAC = new Vertex(a.getPoint().mul(1 - t2).add(c.getPoint().mul(t2)), c11.mul(1 - t2).add(c33.mul(t2)));
+
+
                 if (vAB.getX() > vAC.getX()) {
                     Vec3D temp = vAB;
                     vAB = vAC;
                     vAC = temp;
 
                 }
-                this.fillLine(y, vAB, vAC, c1, c3);
+                this.fillLine(y, vAB, vAC, verAB, verAC, verAB.getColor(), verAC.getColor());
             }
 
             for (int y = (int) (v2.getY() + 1); y < v3.getY(); y++) {
@@ -101,12 +113,15 @@ public class TriangleRas extends Renderer3D {
                 Vec3D vBC = v2.mul(1 - t1).add(v3.mul(t1));
                 Vec3D vAC = v1.mul(1 - t2).add(v3.mul(t2));
 
+                Vertex verBC = new Vertex(b.getPoint().mul(1 - t1).add(c.getPoint().mul(t1)), c22.mul(1 - t1).add(c33.mul(t1)));
+                Vertex verAC = new Vertex(a.getPoint().mul(1 - t1).add(c.getPoint().mul(t1)), c11.mul(1 - t2).add(c33.mul(t2)));
+
                 if (vBC.getX() > vAC.getX()) {
                     Vec3D temp = vBC;
                     vBC = vAC;
                     vAC = temp;
                 }
-                this.fillLine(y, vBC, vAC, c2, c3);
+                this.fillLine(y, vBC, vAC, verBC, verAC, verBC.getColor(), verAC.getColor());
             }
 
 //        for (int y = (int) (v1.getY() + 1); y < v2.getY(); y++) {

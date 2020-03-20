@@ -81,14 +81,14 @@ public class Controller3D {
         renderer3D = new Renderer3D(raster);
         resetCamera();
 
-        testShader = Vertex::getColor;
+        //testShader = Vertex::getColor;
 
-        testShader = vertex -> {
-            long zbytek = Math.round(vertex.x) % 2;
-//                if (zbytek == 0) return Color.GREEN;
-//                else return Color.BLUE;
-            return (zbytek == 0) ? Color.GREEN : Color.BLUE;
-        };
+//        testShader = vertex -> {
+//            long zbytek = Math.round(vertex.x) % 2;
+////                if (zbytek == 0) return Color.GREEN;
+////                else return Color.BLUE;
+//            return (zbytek == 0) ? Color.GREEN : Color.BLUE;
+//        };
 
         // TODO předpoklad naplněného vertex bufferu
 
@@ -229,7 +229,7 @@ public class Controller3D {
         //solids.add(new Cube());
 
         solids.add(new Triangle());
-        solids.add(new Xyz());
+        //solids.add(new Xyz());
 
 
 

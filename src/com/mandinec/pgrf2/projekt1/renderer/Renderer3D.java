@@ -216,10 +216,10 @@ public class Renderer3D implements GPURenderer {
     }
 
     // pozor není naše
-    private Vertex calculateTriangleCut(Vertex v1, Vertex v2) {
-        double t = v1.getPoint().getZ() / (v1.getPoint().getZ() - v2.getPoint().getZ());
-        return new Vertex(new Point3D(v1.getPoint().mul(1 - t).add(v2.getPoint().mul(t))), Color.CYAN);
-    }
+//    private Vertex calculateTriangleCut(Vertex v1, Vertex v2) {
+//        double t = v1.getPoint().getZ() / (v1.getPoint().getZ() - v2.getPoint().getZ());
+//        return new Vertex(new Point3D(v1.getPoint().mul(1 - t).add(v2.getPoint().mul(t))), new Col());
+//    }
 
     private void prepareTriangle(Vertex a, Vertex b, Vertex c) {
         // 1. transformace vrcholů
@@ -557,13 +557,13 @@ public class Renderer3D implements GPURenderer {
 
 
 
-    private void Line(int y, Vec3D a, Vec3D b, Color cA, Color cB){
+    private void Line(int y, Vec3D a, Vec3D b, Col cA, Col cB){
         if (a.getX() > b.getX()) {
             Vec3D temp = a;
             a = b;
             b = temp;
 
-            Color tempC = cA;
+            Col tempC = cA;
             cA = cB;
             cB = tempC;
         }
@@ -574,14 +574,14 @@ public class Renderer3D implements GPURenderer {
         drawPixel((int)b.getX(), y, b.getZ(), cA);
     }
 
-    protected void fillLine(int y, Vec3D a, Vec3D b, Color cA, Color cB) {
+    protected void fillLine(int y, Vec3D a, Vec3D b, Vertex aa, Vertex bb, Col cA, Col cB) {
 //        System.out.println("start fillLine");
         if (a.getX() > b.getX()) {
             Vec3D temp = a;
             a = b;
             b = temp;
 
-            Color tempC = cA;
+            Col tempC = cA;
             cA = cB;
             cB = tempC;
         }
@@ -589,13 +589,18 @@ public class Renderer3D implements GPURenderer {
         for (int x = (int) Math.round(a.getX()); x < b.getX(); x++) {
             double t = (x - a.getX()) / (b.getX() - a.getX());
             double z = a.getZ() * (1 - t) + b.getZ() * t;
+
+//            Vertex verABC = new Vertex(aa.getPoint().mul(1.0 - t).add(bb.getPoint().mul(t)), cA.mul(cB));
+            Vertex verABC = new Vertex(aa.getPoint().mul(1.0 - t).add(bb.getPoint().mul(t)), cA.mul(1 - t).add(cB.mul(t)));
+
 //            System.out.println("drawPixel");
-            drawPixel(x-1, y-1, z, cA);
+            drawPixel(x-1, y-1, z, verABC.getColor());
+            //System.out.println(verABC.getColor());
         }
     }
 
     // ehm private -> public
-    public void drawPixel(int x, int y, double z, Color color) {
+    public void drawPixel(int x, int y, double z, Col color) {
 //        System.out.println("Renderer3D - start drawPixel");
 //        System.out.println("z je : " + z);
 //        System.out.println("zBuffer je : " + zBuffer.get(x, y));

@@ -3,6 +3,7 @@ package com.mandinec.pgrf2.projekt1.raster;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
 import com.mandinec.pgrf2.projekt1.renderer.Renderer3D;
 import com.mandinec.pgrf2.projekt1.view.Raster;
+import transforms.Col;
 import transforms.Vec3D;
 
 import java.awt.*;
@@ -15,8 +16,8 @@ public class Line extends Renderer3D {
 
     public void draw(Vertex a, Vertex b) {
         if (cut(a.getPoint()) && cut(b.getPoint())){
-            Color c1 = a.getColor();
-            Color c2 = b.getColor();
+            Col c1 = a.getColor();
+            Col c2 = b.getColor();
 
             Optional<Vec3D> d1 = a.getPoint().dehomog();
             Optional<Vec3D> d2 = b.getPoint().dehomog();

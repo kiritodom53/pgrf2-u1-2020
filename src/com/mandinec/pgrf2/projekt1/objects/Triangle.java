@@ -3,6 +3,7 @@ package com.mandinec.pgrf2.projekt1.objects;
 import com.mandinec.pgrf2.projekt1.model.Element;
 import com.mandinec.pgrf2.projekt1.model.ElementType;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
+import transforms.Col;
 import transforms.Point3D;
 
 import java.awt.*;
@@ -20,11 +21,15 @@ public class Triangle extends Solid {
 //        vb.add(new Vertex(new Point3D(-1, 0, 0), Color.GREEN));
 //        vb.add(new Vertex(new Point3D(0, -1, 0), Color.RED));
 //        vb.add(new Vertex(new Point3D(-1, -1, 1), Color.ORANGE));
-
-        vb.add(new Vertex(new Point3D(0, 0, 0), Color.CYAN));
-        vb.add(new Vertex(new Point3D(0, 1, 0), Color.GREEN));
-        vb.add(new Vertex(new Point3D(1, 0, 0), Color.RED));
-        vb.add(new Vertex(new Point3D(0, 0, 1), Color.ORANGE));
+//
+//        vb.add(new Vertex(new Point3D(0, 0, 0), Color.CYAN));
+//        vb.add(new Vertex(new Point3D(0, 1, 0), Color.GREEN));
+//        vb.add(new Vertex(new Point3D(1, 0, 0), Color.RED));
+//        vb.add(new Vertex(new Point3D(0, 0, 1), Color.ORANGE));
+        vb.add(new Vertex(new Point3D(0, 0, 0), new Col(0, 0, 255)));
+        vb.add(new Vertex(new Point3D(0, 1, 0), new Col(0, 255, 0)));
+        vb.add(new Vertex(new Point3D(1, 0, 0), new Col(255, 0, 0)));
+        vb.add(new Vertex(new Point3D(0, 0, 1), new Col(0, 0, 255)));
 
         ib.add(0);
         ib.add(1);

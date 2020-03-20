@@ -18,14 +18,14 @@ public class Xyz extends Solid {
 
         elements.add(new Element(ElementType.LINE, 6, 0));
 
-        vb.add(new Vertex(new Point3D(-1, -2, 0.5), Color.GREEN));
-        vb.add(new Vertex(new Point3D(-0.5, -2, 0.5), Color.GREEN));
-
-        vb.add(new Vertex(new Point3D(-0.5, -2, 0.5), Color.RED));
-        vb.add(new Vertex(new Point3D(-0.5, -1.5, 0.5), Color.RED));
-
-        vb.add(new Vertex(new Point3D(-0.5, -2, 0.5), Color.BLUE));
-        vb.add(new Vertex(new Point3D(-0.5, -2, 0.9), Color.BLUE));
+//        vb.add(new Vertex(new Point3D(-1, -2, 0.5), Color.GREEN));
+//        vb.add(new Vertex(new Point3D(-0.5, -2, 0.5), Color.GREEN));
+//
+//        vb.add(new Vertex(new Point3D(-0.5, -2, 0.5), Color.RED));
+//        vb.add(new Vertex(new Point3D(-0.5, -1.5, 0.5), Color.RED));
+//
+//        vb.add(new Vertex(new Point3D(-0.5, -2, 0.5), Color.BLUE));
+//        vb.add(new Vertex(new Point3D(-0.5, -2, 0.9), Color.BLUE));
 
         ib.add(0);
         ib.add(1);

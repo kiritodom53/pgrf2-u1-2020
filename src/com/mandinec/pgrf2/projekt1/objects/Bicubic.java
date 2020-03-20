@@ -47,7 +47,7 @@ public class Bicubic extends Solid{
             counter++;
             //System.out.println("i : " + i);
             for (float j = 0; j < 1.0; j += .1) { // zhuštění
-                vb.add(new Vertex(bc.compute(i,j), Color.BLUE));
+                //vb.add(new Vertex(bc.compute(i,j), Color.BLUE));
             }
         }
 
