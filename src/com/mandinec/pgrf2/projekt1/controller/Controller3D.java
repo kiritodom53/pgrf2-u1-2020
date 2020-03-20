@@ -3,6 +3,7 @@ package com.mandinec.pgrf2.projekt1.controller;
 import com.mandinec.pgrf2.projekt1.model.Element;
 import com.mandinec.pgrf2.projekt1.model.ElementType;
 import com.mandinec.pgrf2.projekt1.model.Vertex;
+import com.mandinec.pgrf2.projekt1.objects.Bicubic;
 import com.mandinec.pgrf2.projekt1.objects.Cube;
 import com.mandinec.pgrf2.projekt1.objects.Solid;
 import com.mandinec.pgrf2.projekt1.objects.Triangle;
@@ -43,19 +44,25 @@ public class Controller3D {
     private List<Vertex> vb = new ArrayList<>();
     private List<Integer> ib = new ArrayList<>();
 
+    // ehm
+    public GPURenderer getRenderer3D() {
+        return renderer3D;
+    }
+
     public Controller3D(Raster raster) {
         initObjects(raster);
         initListeners(raster);
     }
 
-    private void display() {
+    public void display() {
         renderer3D.clear();
 
-        renderer3D.setModel(new Mat4Identity());
+        //renderer3D.setModel(new Mat4Identity());
+        renderer3D.setModel(renderer3D.getModel());
         renderer3D.setView(camera.getViewMatrix());
-        renderer3D.setShader(testShader);
+        //renderer3D.setShader(testShader);
 //        renderer3D.setProjection();
-        renderer3D.setShader(vertex -> new Color(Math.round(vertex.x % 255), 0, 0));
+        //renderer3D.setShader(vertex -> new Color(Math.round(vertex.x % 255), 0, 0));
 
         //renderer3D.draw(elements, vb, ib);
         for (Solid solid : solids) {
@@ -63,7 +70,7 @@ public class Controller3D {
         }
         //renderer3D.draw(new Cube());
 
-        renderer3D.setModel(new Mat4Transl(5, 0, 0));
+        //renderer3D.setModel(new Mat4Transl(0, 0, 0));
 
 //        renderer3D.draw();
     }
@@ -219,6 +226,7 @@ public class Controller3D {
 
         solids.add(new Cube());
         solids.add(new Triangle());
+        //solids.add(new Bicubic(Cubic.FERGUSON));
 
 
         System.out.println("ib");
@@ -274,6 +282,14 @@ public class Controller3D {
 
         raster.addMouseListener(new MouseAdapter() {
             @Override
+            public void mousePressed(MouseEvent e) {
+                mousePositionX = e.getX();
+                mousePositionY = e.getY();
+            }
+        });
+
+        raster.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent g) {
                 click = g.getButton();
                 System.out.println("click1");
@@ -300,7 +316,7 @@ public class Controller3D {
                             Mat4 rot = new Mat4RotXYZ(0, -(mousePositionY - newMousePosY) * 0.02, (mousePositionX - newMousePosX) * 0.02);
                             model = model.mul(rot);
                         }*/
-                            renderer3D.setView(camera.getViewMatrix());
+                            //renderer3D.setView(camera.getViewMatrix());
                             renderer3D.clear();
                             //renderer3D.draw(elements, vb, ib);
                         for (Solid solid : solids) {

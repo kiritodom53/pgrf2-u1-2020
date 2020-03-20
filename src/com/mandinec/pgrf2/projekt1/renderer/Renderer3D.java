@@ -25,6 +25,7 @@ public class Renderer3D implements GPURenderer {
         view = new Mat4Identity();
 
         projection = new Mat4PerspRH(Math.PI / 4, Raster.HEIGHT / (float) Raster.WIDTH, 1, 200);
+        //projection = new Mat4OrthoRH(20, 20, 0.1, 200);
 
         zBuffer = new ZBuffer<>(new Double[Raster.WIDTH][Raster.HEIGHT]);
         zBuffer.clear(1d);
@@ -217,7 +218,10 @@ public class Renderer3D implements GPURenderer {
 
             // lze vytvořit funkci pro ořezání, aby se neopakoval kód
             System.out.println("Jdu kreslit 1");
-            drawTriangle(a, ab, ac);
+            //drawTriangle(a, ab, ac);
+            drawLine(a, ab);
+            drawLine(ab, ac);
+            drawLine(ac, a);
         } else if (c.z < 0) {
             // TODO ac, bc - HOTOVO
             double t = b.getPoint().getZ() / (b.getPoint().getZ() - c.getPoint().getZ());
@@ -231,29 +235,35 @@ public class Renderer3D implements GPURenderer {
 
 
             System.out.println("Jdu kreslit 2");
-            drawTriangle(a, b, ac);
-            drawTriangle(b, ac, bc);
+//            drawTriangle(a, b, ac);
+//            drawTriangle(b, ac, bc);
+
+            drawLine(a, b);
+            drawLine(b, ac);
+            drawLine(a, ac);
+
+            drawLine(b, ac);
+            drawLine(ac, bc);
+            drawLine(bc, b);
 
         } else {
             System.out.println("Jdu kreslit 3");
             System.out.println("a.z : " + a.z);
             System.out.println("b.z : " + b.z);
             System.out.println("c.z : " + c.z);
-            drawTriangle(a, b, c);
+//            drawTriangle(a, b, c);
+            drawLine(a, b);
+            drawLine(a, c);
+            drawLine(b, c);
         }
     }
 
-
-    private Boolean orez(Point3D point){
-        return -point.getW() <= point.getY() &&
-                -point.getW() <= point.getX() &&
-                point.getY() <= point.getW() &&
-                point.getX() <= point.getW() &&
-                point.getZ() >= 0 &&
-                point.getZ() <= point.getW();
-    }
-
-    public void drawLine(Vertex a, Vertex b) {
+    public void drawLineTriangle(Vertex a, Vertex b){
+//        a = a.dehomog();
+//        b = b.dehomog();
+//
+//        Vec3D va = RasterizerUtil.viewportTransformation(a.getPosition().ignoreW(), visibilitityBuffer.getWidth(), visibilitityBuffer.getHeight());
+//        Vec3D vb = RasterizerUtil.viewportTransformation(b.getPosition().ignoreW(), visibilitityBuffer.getWidth(), visibilitityBuffer.getHeight());
 
         Color c1 = a.getColor();
         Color c2 = b.getColor();
@@ -261,13 +271,8 @@ public class Renderer3D implements GPURenderer {
         Optional<Vec3D> d1 = a.getPoint().dehomog();
         Optional<Vec3D> d2 = b.getPoint().dehomog();
 
-//        Vec3D va = RasterizerUtil.viewportTransformation(a.getPosition().ignoreW(), visibilitityBuffer.getWidth(), visibilitityBuffer.getHeight());
-//        Vec3D vb = RasterizerUtil.viewportTransformation(b.getPosition().ignoreW(), visibilitityBuffer.getWidth(), visibilitityBuffer.getHeight());
-
+        // zahodit trojúhelník, pokud některý vrchol má w==0 (nelze provést dehomogenizaci)
         if (!d1.isPresent() || !d2.isPresent()) return;
-
-        System.out.println("is present ");
-
 
         Vec3D v1 = d1.get();
         Vec3D v2 = d2.get();
@@ -275,16 +280,6 @@ public class Renderer3D implements GPURenderer {
         v1 = transformToWindow(v1);
         v2 = transformToWindow(v2);
 
-
-        if (v1.getY() > v2.getY()) {
-            Vec3D temp = v1;
-            v1 = v2;
-            v2 = temp;
-
-            Color tempC = c1;
-            c1 = c2;
-            c2 = tempC;
-        }
 
         int x1 = (int) v1.getX();
         int y1 = (int) v1.getY();
@@ -309,14 +304,8 @@ public class Renderer3D implements GPURenderer {
         if (dx >= dy) {
             while (true) {
                 double t1 = (x - v1.getX()) / (v2.getX() - v1.getX());
-//                Vertex vertexAB = a.mul(1 - t1).add(b.mul(t1));
-                Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
-                System.out.println(vertexAB.x);
-                System.out.println(vertexAB.y);
-                System.out.println(vertexAB.z);
-                System.out.println(vertexAB.w);
-                System.out.println("vykresleni 1");
-                this.drawPixel(x, y, vertexAB.z, vertexAB.getColor());
+                Vertex vertexAB = new Vertex(new Point3D(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1))), c1);
+                drawPixel(x, y, vertexAB.getPoint().getZ(), vertexAB.getColor());
                 if (x == x2)
                     break;
                 x += ix;
@@ -329,10 +318,8 @@ public class Renderer3D implements GPURenderer {
         } else {
             while (true) {
                 double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
-//                Vertex vertexAB = a.mul(1 - t1).add(b.mul(t1));
-                Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
-                System.out.println("vykresleni 2");
-                this.drawPixel(x, y, vertexAB.z, vertexAB.getColor());
+                Vertex vertexAB = new Vertex(new Point3D(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1))), c1);
+                drawPixel(x, y, vertexAB.getPoint().getZ(), vertexAB.getColor());
                 if (y == y2)
                     break;
                 y += iy;
@@ -343,6 +330,149 @@ public class Renderer3D implements GPURenderer {
                 }
             }
         }
+    }
+
+    private Boolean orez(Point3D point){
+        return -point.getW() <= point.getY() &&
+                -point.getW() <= point.getX() &&
+                point.getY() <= point.getW() &&
+                point.getX() <= point.getW() &&
+                point.getZ() >= 0 &&
+                point.getZ() <= point.getW();
+    }
+
+
+    //public void drawLineDDA(int x1, int y1, int x2, int y2, int c) {
+
+    public void drawLine(Vertex a, Vertex b) {
+        Color c1 = a.getColor();
+
+//        a = a.dehomog();
+//        b = b.dehomog();
+
+        Optional<Vec3D> d1 = a.getPoint().dehomog();
+        Optional<Vec3D> d2 = b.getPoint().dehomog();
+
+        Vec3D v1 = d1.get();
+        Vec3D v2 = d2.get();
+
+
+        v1 = transformToWindow(v1);
+        v2 = transformToWindow(v2);
+
+//        Vec3D va = RasterizerUtil.viewportTransformation(a.getPosition().ignoreW(), visibilitityBuffer.getWidth(), visibilitityBuffer.getHeight());
+//        Vec3D vb = RasterizerUtil.viewportTransformation(b.getPosition().ignoreW(), visibilitityBuffer.getWidth(), visibilitityBuffer.getHeight());
+
+//        v1.getX();
+//        v2.getX();
+//        v1.getY();
+//        v2.getY();
+
+        int x, x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+        float k;
+        float y;
+        if (Math.abs(v2.getY() - v1.getY()) < Math.abs(v2.getX() - v1.getX())) {
+            if (v2.getX() < v1.getX()) {
+                x = (int)v1.getX();
+                x1 = (int)v2.getX();
+                x2 = x;
+                x = (int)v1.getY();
+                y1 = (int)v2.getY();
+                y2 = x;
+            }
+
+            k = (float) (y2 - y1) / (float) (x2 - x1);
+            y = (float) y1;
+
+            for (x = x1; x <= x2; ++x) {
+                double t1 = (x - v1.getX()) / (v2.getX() - v1.getX());
+                Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
+                //raster.drawPixel(x, (int) ((double) y + 0.5D));
+                drawPixel(x, (int) ((double) y + 0.5D), vertexAB.getPoint().getZ(), c1);
+                y += k;
+            }
+        } else {
+            if (y2 < y1) {
+                x = x1;
+                x1 = x2;
+                x2 = x;
+                x = y1;
+                y1 = y2;
+                y2 = x;
+            }
+
+            k = (float) (x2 - x1) / (float) (y2 - y1);
+            y = (float) x1;
+
+            for (x = y1; x <= y2; ++x) {
+                double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
+                Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
+
+                //raster.drawPixel((int) ((double) y + 0.5D), x);
+                drawPixel((int) ((double) y + 0.5D), x, vertexAB.getPoint().getZ(), c1);
+                y += k;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+//        int x1 = (int) v1.getX();
+//        int y1 = (int) v1.getY();
+//
+//        int x2 = (int) v2.getX();
+//        int y2 = (int) v2.getY();
+//
+//        int d = 0;
+//
+//        int dx = Math.abs(x2 - x1);
+//        int dy = Math.abs(y2 - y1);
+//
+//        int dx2 = 2 * dx;
+//        int dy2 = 2 * dy;
+//
+//        int ix = x1 < x2 ? 1 : -1;
+//        int iy = y1 < y2 ? 1 : -1;
+//
+//        int x = x1;
+//        int y = y1;
+//
+//        if (dx >= dy) {
+//            while (true) {
+//                double t1 = (x - v1.getX()) / (v2.getX() - v1.getX());
+//                Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
+//                drawPixel(x, y, vertexAB.getPoint().getZ(), vertexAB.getColor());
+//                if (x == x2)
+//                    break;
+//                x += ix;
+//                d += dy2;
+//                if (d > dx) {
+//                    y += iy;
+//                    d -= dx2;
+//                }
+//            }
+//        } else {
+//            while (true) {
+//                double t1 = (y - v1.getY()) / (v2.getY() - v1.getY());
+//                Vertex vertexAB = new Vertex(a.getPoint().mul(1 - t1).add(b.getPoint().mul(t1)), c1);
+//                drawPixel(x, y, vertexAB.getPoint().getZ(), vertexAB.getColor());
+//                if (y == y2)
+//                    break;
+//                y += iy;
+//                d += dx2;
+//                if (d > dy) {
+//                    x += ix;
+//                    d -= dy2;
+//                }
+//            }
+//        }
     }
 
 
